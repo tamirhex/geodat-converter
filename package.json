@@ -1,0 +1,14 @@
+{
+  "name": "dxf-project",
+  "version": "1.0.0",
+  "description": "Convers from dxf to json",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tamir.hexsoft",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
