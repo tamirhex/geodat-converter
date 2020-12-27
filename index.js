@@ -15,6 +15,9 @@ async function changeMe(){
         console.log(util.inspect(theObject, false, null).substring(0,2000));// *logs only entities of object(cut)*
         console.log("*********************");
         console.log(theObject[2].layer);//*logs a specific entity's layer name
+        const requestedLayer = "PMISUNDER";
+        const result = theObject.filter(key => key.layer == requestedLayer);
+        console.log(result);
         //console.dir(helper.parsed);
         fs.writeFile("./job description/dxf_example_myConvert.txt",JSON.stringify(helper.parsed));
         //fs.writeFile("./job description/dxf_example_myConvert.txt",theObject);
