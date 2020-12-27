@@ -9,6 +9,7 @@
   "author": "Tamir.hexsoft",
   "license": "ISC",
   "dependencies": {
+    "dxf": "^4.4.2",
     "express": "^4.17.1"
   }
 }
