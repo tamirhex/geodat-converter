@@ -27,9 +27,11 @@ async function changeMe(){
         console.log(theObject[2].layer);//*logs a specific entity's layer name
         const requestedLayers = ["PMISUNDER"];
         const requestedTypes = ["LINE"];
-        const result = theObject.filter(key => requestedLayers.includes(key.layer) &&
+        //* filters the dxf for requested layers and types within a layer *//
+        const result = theObject.filter(key => requestedLayers[0] && //*requestedLayers[0] because currently only possible to request a single layer from API.
                     requestedTypes.includes(key.type));
-        let i = 0 //temporary-deleteme.
+        //let i = 0 //temporary-deleteme.
+        let data = "";
         filteredObj = {
             "version":
             {
@@ -37,11 +39,13 @@ async function changeMe(){
                 "objectName":fileName,
                 "versionTimestamp":"2020.28.12"
             },
-            "metadata":"bebe",
-            "layersInDxfSource":"",
+            "metadata":"Will be added later",
+            "layersInDxfSource":"will be added later",
             "layerFromDxfSource":
             {
-                "layername":result[i]?.layer,
+                "layerName":requestedLayers[0],
+                "layerDrawings":[],
+                /*
                 "code_00_drawingType":result[i]?.type,
 				"code_10_startXeastLng":result[i]?.start?.x,
 				"code_20_startYnorthLat":result[i]?.start?.y,
@@ -51,13 +55,31 @@ async function changeMe(){
 				"code_31_endZelevation":result[i]?.end?.z,
 				"code_40_circleArcRadius":result[i]?.r,
 				"code_50_startArcAngle":result[i]?.startAngle,
-				"code_51_endArcAngle":result[i]?.endAngle
+                "code_51_endArcAngle":result[i]?.endAngle
+                */
             }
         } 
         //let data = JSON.stringify(filteredObj);
-        let data = util.inspect(filteredObj, false, null);
-        console.log(data);   
-        //console.log(result);
+        //data += util.inspect(filteredObj, false, null);
+        //console.log(data);   
+
+        for(i in result){
+            filteredObj.layerFromDxfSource.layerDrawings[i] = 
+            {
+                "code_00_drawingType":result[i]?.type,
+                "code_10_startXeastLng":result[i]?.start?.x,
+                "code_20_startYnorthLat":result[i]?.start?.y,
+                "code_30_startZelevation":result[i]?.start?.z,
+                "code_11_endXeastLng":result[i]?.end?.x,
+                "code_21_endYnorthLat":result[i]?.end?.y,
+                "code_31_endZelevation":result[i]?.end?.z,
+                "code_40_circleArcRadius":result[i]?.r,
+                "code_50_startArcAngle":result[i]?.startAngle,
+                "code_51_endArcAngle":result[i]?.endAngle
+            }
+
+            data = util.inspect(filteredObj, false, null);
+        }
         //fs.writeFile("./job description/dxf_example_myConvert.txt",JSON.stringify(helper.parsed));
         fs.writeFile("./job description/dxf_example_myConvert.txt",data);
     }
