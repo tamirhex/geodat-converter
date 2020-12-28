@@ -25,35 +25,41 @@ async function changeMe(){
         console.log(util.inspect(theObject, false, null).substring(0,2000));// *logs only entities of object(cut)*
         console.log("*********************");
         console.log(theObject[2].layer);//*logs a specific entity's layer name
-        const requestedLayer = "PMISUNDER";
-        const result = theObject.filter(key => key.layer == requestedLayer);
+        const requestedLayers = ["PMISUNDER"];
+        const requestedTypes = ["LINE"];
+        const result = theObject.filter(key => requestedLayers.includes(key.layer) &&
+                    requestedTypes.includes(key.type));
+        let i = 0 //temporary-deleteme.
         filteredObj = {
             "version":
             {
-                "title": "DXF Converted to JSON",
-                "objectName": fileName,
-                "versionTimestamp": "2020.28.12"
+                "title":"DXF Converted to JSON",
+                "objectName":fileName,
+                "versionTimestamp":"2020.28.12"
             },
             "metadata":"bebe",
             "layersInDxfSource":"",
             "layerFromDxfSource":
             {
-                "layername":"",
-                "code_00_drawingType"    : result[0]?.type,
-				"code_10_startXeastLng"  : "string",
-				"code_20_startYnorthLat" : "string",
-				"code_30_startZelevation": "string",
-				"code_11_endXeastLng"    : "string",
-				"code_21_endYnorthLat"   : "string",
-				"code_31_endZelevation"  : "string",
-				"code_40_circleArcRadius": "string",
-				"code_50_startArcAngle"  : "string",
-				"code_51_endArcAngle"    : "string"
+                "layername":result[i]?.layer,
+                "code_00_drawingType":result[i]?.type,
+				"code_10_startXeastLng":result[i]?.start?.x,
+				"code_20_startYnorthLat":result[i]?.start?.y,
+				"code_30_startZelevation":result[i]?.start?.z,
+				"code_11_endXeastLng":result[i]?.end?.x,
+				"code_21_endYnorthLat":result[i]?.end?.y,
+				"code_31_endZelevation":result[i]?.end?.z,
+				"code_40_circleArcRadius":result[i]?.r,
+				"code_50_startArcAngle":result[i]?.startAngle,
+				"code_51_endArcAngle":result[i]?.endAngle
             }
         } 
-        console.dir(filteredObj);   
+        //let data = JSON.stringify(filteredObj);
+        let data = util.inspect(filteredObj, false, null);
+        console.log(data);   
         //console.log(result);
-        fs.writeFile("./job description/dxf_example_myConvert.txt",JSON.stringify(helper.parsed));
+        //fs.writeFile("./job description/dxf_example_myConvert.txt",JSON.stringify(helper.parsed));
+        fs.writeFile("./job description/dxf_example_myConvert.txt",data);
     }
     catch(error){
         console.error(error);
