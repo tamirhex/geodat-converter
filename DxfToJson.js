@@ -2,24 +2,17 @@ const Oldfs = require('fs');
 const fs = Oldfs.promises;
 const {Helper} = require('dxf');
 const util = require('util');
-const request = require('request');
 const axios = require('axios');
 //url to download dxf:
 //https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3
 
-exports.DxfToJson = async (url,layerName) => {
+exports.dxfToJson = async (url,layerName) => {
     try{
         //*reads the dxf file preparing for parsing*//
         //dataString = await fs.readFile(url,"utf8");
-        /*const options = {
-            url: 'https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3',
-
-        }*/
         dxfContents =  await axios.get("https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3");
         dataString = dxfContents.data;
-        //let log = util.inspect(dataString, false, null);
-        let log = dataString;
-        fs.writeFile("./job description/deleteme.txt",log);
+
         //* parsing the dxf recieving a parsed object  *//
         const helper = new Helper(dataString);
         theObject = helper.parsed.entities;
@@ -63,9 +56,10 @@ exports.DxfToJson = async (url,layerName) => {
             }
 
         }
+        return filteredObj;
         //* Writes the object as a nice string and writes to file *//
-        let data = util.inspect(filteredObj, false, null);
-        fs.writeFile("./job description/dxf_example_myConvert.txt",data);
+        //let data = util.inspect(filteredObj, false, null);
+        //fs.writeFile("./job description/dxf_example_myConvert.txt",data);
     }
     catch(error){
         console.error(error);
