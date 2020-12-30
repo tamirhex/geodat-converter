@@ -1,0 +1,18 @@
+{
+  version: {
+    title: 'DXF Converted to JSON',
+    objectName: '???',
+    versionTimestamp: '2020.29.12'
+  },
+  metadata: {
+    docCreationDateYYYYMMDD: '2020.12.30',
+    docCreationTimeHHMMSSSS: '16:05:0391',
+    docSourceFileName: "inline; filename*=utf-8''dxf_example.dxf",
+    docExtractorServiceName: '????',
+    docExtractorServiceVersion: '????',
+    docRequesterID: '????',
+    docSourceDxfUrl: 'https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3'
+  },
+  layersInDxfSource: 'PMISUNDER',
+  layerFromDxfSource: { layerName: 'PMISUNDER', layerDrawings: [] }
+}
