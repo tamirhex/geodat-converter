@@ -10,7 +10,7 @@ exports.dxfToJson = async (url,layerName) => {
     try{
         //*reads the dxf file preparing for parsing*//
         //dataString = await fs.readFile(url,"utf8");
-        dxfContents =  await axios.get("https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3");
+        dxfContents =  await axios.get(url);
         dataString = dxfContents.data;
 
         //* parsing the dxf recieving a parsed object  *//
@@ -21,7 +21,7 @@ exports.dxfToJson = async (url,layerName) => {
         const requestedLayers = [layerName];
         const requestedTypes = ["LINE"];
         //* filters the dxf for requested layers and types within a layer *//
-        const result = theObject.filter(key => requestedLayers[0] && //*requestedLayers[0] because currently only possible to request a single layer from API.
+        const result = theObject.filter(key => key.layer == requestedLayers[0] && //*requestedLayers[0] because currently only possible to request a single layer from API.
                     requestedTypes.includes(key.type));
         //* building the initial object of layer before inserting all drawings of layer*//
         filteredObj = {
@@ -31,7 +31,16 @@ exports.dxfToJson = async (url,layerName) => {
                 "objectName":url,
                 "versionTimestamp":"2020.29.12"
             },
-            "metadata":"Will be added later",
+            "metadata":
+            {
+                "docCreationDateYYYYMMDD"  		 : "string",
+                "docCreationTimeHHMMSSSS"  		 : "string",
+                "docSourceFileName"       		 : "string",
+                "docExtractorServiceName"  		 : "string",
+                "docExtractorServiceVersion"	 : "string",
+                "docRequesterID"		  		 : "string", 
+                "docSourceDxfUrl"				 : "string"
+            },
             "layersInDxfSource":"will be added later",
             "layerFromDxfSource":
             {
@@ -40,21 +49,26 @@ exports.dxfToJson = async (url,layerName) => {
             }
         }    
         //*fills layerDrawings array with json objects describing the drawings*//
-        for(i in result){
-            filteredObj.layerFromDxfSource.layerDrawings[i] = 
-            {
-                "code_00_drawingType":result[i]?.type,
-                "code_10_startXeastLng":result[i]?.start?.x,
-                "code_20_startYnorthLat":result[i]?.start?.y,
-                "code_30_startZelevation":result[i]?.start?.z,
-                "code_11_endXeastLng":result[i]?.end?.x,
-                "code_21_endYnorthLat":result[i]?.end?.y,
-                "code_31_endZelevation":result[i]?.end?.z,
-                "code_40_circleArcRadius":result[i]?.r,
-                "code_50_startArcAngle":result[i]?.startAngle,
-                "code_51_endArcAngle":result[i]?.endAngle
+        if(result){
+            for(i in result){
+                filteredObj.layerFromDxfSource.layerDrawings[i] = 
+                {
+                    "code_00_drawingType":result[i]?.type,
+                    "code_10_startXeastLng":result[i]?.start?.x,
+                    "code_20_startYnorthLat":result[i]?.start?.y,
+                    "code_30_startZelevation":result[i]?.start?.z,
+                    "code_11_endXeastLng":result[i]?.end?.x,
+                    "code_21_endYnorthLat":result[i]?.end?.y,
+                    "code_31_endZelevation":result[i]?.end?.z,
+                    "code_40_circleArcRadius":result[i]?.r,
+                    "code_50_startArcAngle":result[i]?.startAngle,
+                    "code_51_endArcAngle":result[i]?.endAngle
+                }
             }
-
+        }
+        else{
+            filteredObj.layerFromDxfSource.layerDrawings[0] = 
+                "Error reading drawings, make sure post request is in JSON format and that the url is correct";
         }
         return filteredObj;
         //* Writes the object as a nice string and writes to file *//
