@@ -12,26 +12,28 @@ exports.dxfToJson = async (url,layerName) => {
         //*reads the dxf file preparing for parsing*//
         //dataString = await fs.readFile(url,"utf8");
         dxfContents =  await axios.get(url);
-        dataString = dxfContents.data;
-        fileNameAlmost = dxfContents.headers["content-disposition"]
+        dataString = dxfContents?.data;
+        fileNameAlmost = dxfContents?.headers["content-disposition"]
 
         //* parsing the dxf recieving a parsed object  *//
         const helper = new Helper(dataString);
         theObject = helper.parsed.entities;
+        /*
         let drawingTypeString = "";
         for (something in theObject){
             drawingTypeString += something.type + "\n";
         }
         fs.writeFile("types.txt",drawingTypeString);
+        */
 
         //* filters the dxf for requested layers and types within a layer *//
         const requestedLayers = [layerName];
         //const requestedTypes = ["LINE","AcDbPolyline","LWPOLYLINE"];
-        const requestedTypes = ["PMISUNDER","AcDbPolyline","LWPOLYLINE"];
+        const requestedTypes = ["LINE","AcDbPolyline","LWPOLYLINE"]; // for some reason only returns line
         //* filters the dxf for requested layers and types within a layer *//
-        
-        const result = theObject.filter(key => key.layer == requestedLayers[0] && //*requestedLayers[0] because currently only possible to request a single layer from API.
-                    requestedTypes.includes(key.type));
+
+        const result = theObject.filter(key => key?.layer == requestedLayers[0] && //*requestedLayers[0] because currently only possible to request a single layer from API.
+                    requestedTypes.includes(key?.type));
        /* const result = theObject.filter(key => //*requestedLayers[0] because currently only possible to request a single layer from API.
             key.type == "AcDbPolyline");*/
         //* building the initial object of layer before inserting all drawings of layer*//
@@ -60,7 +62,7 @@ exports.dxfToJson = async (url,layerName) => {
             }
         }    
         //*fills layerDrawings array with json objects describing the drawings*//
-        if(result){
+        if(result != []){
             for(i in result){
                 filteredObj.layerFromDxfSource.layerDrawings[i] = 
                 {

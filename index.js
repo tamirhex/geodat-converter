@@ -21,10 +21,25 @@ exports.cloudFunction = async (req, res) => {
                 "req.body.layerName is " + req.body.layerName + "\n error is " + error);
             }
             break;
-        case 'GET':
-            testValue = req.params.test;
-            testValue2 = req.query.test
-            res.send("Value is " + testValue + "\n" + "Value2 is " + testValue2);
+        case 'GET'://*not fully working yet
+            try{
+                url = decodeURIComponent(req.query.url ?? req.query.URL);
+                layerName = req.query.layerName ?? req.query.layername ?? req.query.LAYERNAME;
+                //res.send("layername: " + layerName + "url " + url);
+                json = await dxfToJson(url,layerName);
+                res.set({ 'content-type': 'application/json; charset=utf-8' });
+                res.send("url is " + url + "layername is " + layerName + "json if"+json);
+                /*
+                string = JSON.stringify(json);
+                console.log(string)
+                string = string.substring(0,2000);
+                console.log("substring " + string);
+                res.send(string);
+                */
+            }
+            catch (error){
+                res.send("An error has occured: " + error);
+            }
             break;
         default:
             break;
