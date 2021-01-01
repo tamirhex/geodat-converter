@@ -1,4 +1,5 @@
 const {dxfToJson}= require("./dxfToJson");
+const {LjToPj}= require("./LjToPj");
 const Oldfs = require('fs');
 const util = require('util');
 const fs = Oldfs.promises;
@@ -46,16 +47,16 @@ exports.cloudFunction = async (req, res) => {
     }
   };
 
-async function something(){
+async function testFunction(){
     url = "https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3"
     json = await dxfToJson(url,"PMISUNDER");
-    let data = util.inspect(json, false, null);
-    fs.writeFile('testJson', data);
-    
+    LjToPj(json);
+    //let data = util.inspect(json, false, null);
+    //fs.writeFile('testJson', data);
     
 }
 
-//something();
+testFunction();
   
   
 
