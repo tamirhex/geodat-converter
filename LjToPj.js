@@ -22,6 +22,8 @@ function cords(lineObject){
  * @param {number} num2 
  * @param {number} okRatio 
  * @return {boolean} 
+ * function might be used in the future to determine if the line coordinates are close enough
+ * to not repeat them
  */
 function approxeq(num1, num2, okRatio){
    
@@ -46,33 +48,42 @@ exports.LjToPj = async (Lj) =>
     endY = Lj.layerFromDxfSource.layerDrawings[0]
     .code_21_endYnorthLat;
 
+
     lineArray = Lj.layerFromDxfSource.layerDrawings;
     polyline = [];
-    for (j in lineArray)
-        lineArray[j].index = j;
+
+
     for (i = 0; i < lineArray.length; i++){
-        point = {
-            "xLng": undefined,
-            "yLat": undefined,
-            "zElv" :  0
+
+        x0 =lineArray[i].code_10_startXeastLng;
+        x1 =lineArray[i].code_11_endXeastLng;
+        y0 =lineArray[i].code_20_startYnorthLat;
+        y1 =lineArray[i].code_21_endYnorthLat;
+
+        point0 = {
+            "xLng": x0,
+            "yLat": y0,
+            "zElv":  0
         }
-        if(i == 0){
-            polyline.push(lineArray[i]);
+
+        point1 = {
+            "xLng": x1,
+            "yLat": y1,
+            "zElv":  0
         }
-        else{
-            
-            if(approxeq(cords(lineArray[i-1]).x1,cords(lineArray[i]).x0) &&
-                approxeq(cords(lineArray[i-1]).y1,cords(lineArray[i]).y0)) {
-                    //end of previous line is about the same as start of proceeding line:
-                    polyline.push(lineArray[i]); 
-                    console.log(`i-1 is ${i-1} and iis ${i}`);
-                    console.log(`
-                    ${cords(lineArray[i-1]).x1} approx ${cords(lineArray[i]).x0} is
-                    ${approxeq(cords(lineArray[i-1]).x1,cords(lineArray[i]).x0)}`
-                    );
-                }
-            else {
-               // i = i - 1;
+
+        if (i == 0) {// initialize first point in polyline 
+            polyline.push(point0,point1)
+        }
+        else {
+            lastPoint = polyline[polyline.length-1];
+            if (approxeq(x0, lastPoint.xLng) && approxeq(y0, lastPoint.yLat)){
+                console.log(`DUPLICATE FOUND ${x0} & ${lastPoint.xLng} \n || ${y0} && ${lastPoint.yLat}`);
+                //start of current line is approximetly the same last point in polyline,
+                //then push only your end point of current line.
+                polyline.push(point1);
+            } else {
+                polyline.push(point0,point1);
             }
             
         }
@@ -83,7 +94,7 @@ exports.LjToPj = async (Lj) =>
 
     //console.log(`${endX},${endY}`);
     let data = util.inspect(polyline, false, null);
-    fs.writeFile('LjToPj_LOGFILE_new', data);
+    fs.writeFile('LjToPj_LOGFILE', data);
 
     //console.log(sortedLines);
 }
