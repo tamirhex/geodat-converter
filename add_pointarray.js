@@ -27,12 +27,12 @@ function approxeq(num1, num2, okRatio) {
     }
 }
 
-function addLinePoints(drawingsArray, polyline, lastPoint){
-    x0 = drawingsArray[i].code_10_startXeastLng;
-    x1 = drawingsArray[i].code_11_endXeastLng;
-    y0 = drawingsArray[i].code_20_startYnorthLat;
-    y1 = drawingsArray[i].code_21_endYnorthLat;
-    console.log(i);
+
+function addLinePoints(drawing, polyline, lastPoint){
+    x0 = drawing.code_10_startXeastLng;
+    x1 = drawing.code_11_endXeastLng;
+    y0 = drawing.code_20_startYnorthLat;
+    y1 = drawing.code_21_endYnorthLat;
     point0 = {
         'point': {
             "xLng": x0,
@@ -54,7 +54,6 @@ function addLinePoints(drawingsArray, polyline, lastPoint){
     }
     else {
         if (approxeq(x0, lastPoint.point.xLng) && approxeq(y0, lastPoint.point.yLat)){
-            console.log("found equals");
             //start of current line is approximetly the same last point in polyline,
             //then push only your end point of current line.
             polyline.push(point1);
@@ -65,14 +64,19 @@ function addLinePoints(drawingsArray, polyline, lastPoint){
     return point1;
 }
 
-function addArcPoints(drawingsArray, polyline) {
-    xC = drawingsArray[i].code_10_startXeastLng;
+function addArcPoints(drawing, polyline) {
+    // For ARC type, there is only center x,y ; so startX is same as endX, so is for y.
+    xc = drawing.code_10_startXeastLng;
+    yc = drawing.code_20_startYnorthLat;
+
     let centerPoint = {'point': {
-        "xLng": x1,
-        "yLat": y1,
+        "xLng": xc,
+        "yLat": yc,
         "zElv":  0
         }
     }
+    console.log(`pushing point ${centerPoint.point.xLng},${centerPoint.point.yLat}`);
+    polyline.push(centerPoint)
 }
 
 //**Lj stands for Line Json and Pj stands for Polyline json */
@@ -81,12 +85,11 @@ exports.add_pointarray = async (Lj) => {
     //console.dir(drawingsArray);
     let polyline = [];
     let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};
-    for (i = 0; i < drawingsArray.length; i++) {
+    for (let i = 0; i < drawingsArray.length; i++) {
         if (drawingsArray[i].code_00_drawingType == 'LINE') {
-            //console.log("if happened");
-            lastPoint = addLinePoints(drawingsArray, polyline, lastPoint);
-        } else if (drawingsArray.code_00_drawingType == 'ARC') {
-            addArcPoints(drawingsArray, polyline);
+            lastPoint = addLinePoints(drawingsArray[i], polyline, lastPoint);
+        } else if (drawingsArray[i].code_00_drawingType == 'ARC') {
+            addArcPoints(drawingsArray[i], polyline);
         }
     }
 
