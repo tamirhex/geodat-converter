@@ -29,11 +29,11 @@ exports.dxfToJson = async (url,layerName) => {
         //* filters the dxf for requested layers and types within a layer *//
         const requestedLayers = [layerName];
         //const requestedTypes = ["LINE","AcDbPolyline","LWPOLYLINE"];
-        const requestedTypes = ["LINE","AcDbPolyline","LWPOLYLINE"]; // for some reason only returns line
+        const requestedTypes = ["LINE", "ARC", "AcDbPolyline", "LWPOLYLINE"];
         //* filters the dxf for requested layers and types within a layer *//
 
-        const result = theObject.filter(key => key?.layer == requestedLayers[0] /*&& //*requestedLayers[0] because currently only possible to request a single layer from API.
-                    requestedTypes.includes(key?.type)*/);
+        const result = theObject.filter(key => key?.layer == requestedLayers[0] && //requestedLayers[0] because currently only possible to request a single layer from API.
+                    requestedTypes.includes(key?.type));
        /* const result = theObject.filter(key => //*requestedLayers[0] because currently only possible to request a single layer from API.
             key.type == "AcDbPolyline");*/
         //* building the initial object of layer before inserting all drawings of layer*//
@@ -62,21 +62,21 @@ exports.dxfToJson = async (url,layerName) => {
             }
         }    
         //*fills layerDrawings array with json objects describing the drawings*//
-        if(result != []){
-            for(i in result){
-                filteredObj.layerFromDxfSource.layerDrawings[i] = result[i];/*
+        if (result != []) {
+            for (i in result) {
+                filteredObj.layerFromDxfSource.layerDrawings[i] =
                 {
                     "code_00_drawingType":result[i]?.type,
-                    "code_10_startXeastLng":result[i]?.start?.x,
-                    "code_20_startYnorthLat":result[i]?.start?.y,
-                    "code_30_startZelevation":result[i]?.start?.z,
-                    "code_11_endXeastLng":result[i]?.end?.x,
-                    "code_21_endYnorthLat":result[i]?.end?.y,
-                    "code_31_endZelevation":result[i]?.end?.z,
+                    "code_10_startXeastLng":result[i]?.start?.x ?? result[i]?.x,
+                    "code_20_startYnorthLat":result[i]?.start?.y ?? result[i]?.y,
+                    "code_30_startZelevation":result[i]?.start?.z ?? result[i]?.z,
+                    "code_11_endXeastLng":result[i]?.end?.x ?? result[i]?.x,
+                    "code_21_endYnorthLat":result[i]?.end?.y ?? result[i]?.y,
+                    "code_31_endZelevation":result[i]?.end?.z ?? result[i]?.z,
                     "code_40_circleArcRadius":result[i]?.r,
                     "code_50_startArcAngle":result[i]?.startAngle,
                     "code_51_endArcAngle":result[i]?.endAngle
-                }*/
+                }
             }
         }
         else{

@@ -51,7 +51,7 @@ exports.cloudFunction = async (req, res) => {
 async function testFunction(){
     url = "https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3"
     json = await dxfToJson(url,"PMISUNDER");
-    //add_pointarray(json);
+    add_pointarray(json);
     let data = util.inspect(json, true, null);
     fs.writeFile('testJson', data);
     

@@ -27,50 +27,71 @@ function approxeq(num1, num2, okRatio) {
     }
 }
 
-
-//**Lj stands for Line Json and Pj stands for Polyline json */
-exports.add_pointarray = async (Lj) => 
-{
-    lineArray = Lj.layerFromDxfSource.layerDrawings;
-    polyline = [];
-
-    for (i = 0; i < lineArray.length; i++){
-
-        x0 =lineArray[i].code_10_startXeastLng;
-        x1 =lineArray[i].code_11_endXeastLng;
-        y0 =lineArray[i].code_20_startYnorthLat;
-        y1 =lineArray[i].code_21_endYnorthLat;
-
-        point0 = {
-            'point': {
-                "xLng": x0,
-                "yLat": y0,
-                "zElv":  0
-            }
-        }
-        point1 = {
-            'point': {
-                "xLng": x1,
-                "yLat": y1,
-                "zElv":  0
-            }
-        }
-
-
-        if (i == 0) {// initialize first point in polyline 
-            polyline.push(point0,point1)
-        }
-        else {
-            lastPoint = polyline[polyline.length-1].point;
-            if (approxeq(x0, lastPoint.xLng) && approxeq(y0, lastPoint.yLat)){
-                //start of current line is approximetly the same last point in polyline,
-                //then push only your end point of current line.
-                polyline.push(point1);
-            } else {
-                polyline.push(point0,point1);
-            }   
+function addLinePoints(drawingsArray, polyline, lastPoint){
+    x0 = drawingsArray[i].code_10_startXeastLng;
+    x1 = drawingsArray[i].code_11_endXeastLng;
+    y0 = drawingsArray[i].code_20_startYnorthLat;
+    y1 = drawingsArray[i].code_21_endYnorthLat;
+    console.log(i);
+    point0 = {
+        'point': {
+            "xLng": x0,
+            "yLat": y0,
+            "zElv":  0
         }
     }
+    point1 = {
+        'point': {
+            "xLng": x1,
+            "yLat": y1,
+            "zElv":  0
+        }
+    }
+
+
+    if (lastPoint.point.xLng == 0) {// initialize first point in polyline 
+        polyline.push(point0,point1)
+    }
+    else {
+        if (approxeq(x0, lastPoint.point.xLng) && approxeq(y0, lastPoint.point.yLat)){
+            console.log("found equals");
+            //start of current line is approximetly the same last point in polyline,
+            //then push only your end point of current line.
+            polyline.push(point1);
+        } else {
+            polyline.push(point0,point1);
+        }   
+    }
+    return point1;
+}
+
+function addArcPoints(drawingsArray, polyline) {
+    xC = drawingsArray[i].code_10_startXeastLng;
+    let centerPoint = {'point': {
+        "xLng": x1,
+        "yLat": y1,
+        "zElv":  0
+        }
+    }
+}
+
+//**Lj stands for Line Json and Pj stands for Polyline json */
+exports.add_pointarray = async (Lj) => {
+    let drawingsArray = Lj.layerFromDxfSource.layerDrawings;
+    //console.dir(drawingsArray);
+    let polyline = [];
+    let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};
+    for (i = 0; i < drawingsArray.length; i++) {
+        if (drawingsArray[i].code_00_drawingType == 'LINE') {
+            //console.log("if happened");
+            lastPoint = addLinePoints(drawingsArray, polyline, lastPoint);
+        } else if (drawingsArray.code_00_drawingType == 'ARC') {
+            addArcPoints(drawingsArray, polyline);
+        }
+    }
+
+      
+
 
 
 
