@@ -1,4 +1,10 @@
-//files and util for logging purposes
+/**
+ * add_pointarray takes an intial veresion of Dxf json, with just drawing types
+ * and their attributes, and turns those drawings and attributes (specifically coordinates attributes)
+ * and extracts points out of them, with some rules as to how the points are taken
+ * depending on drawing type, e.g 'ARC' or 'LINE'.
+ * 
+ */
 const Oldfs = require('fs');
 const fs = Oldfs.promises;
 const util = require('util');
@@ -11,7 +17,7 @@ const util = require('util');
  * @param {number} okRatio 
  * @return {boolean} 
  * function might be used in the future to determine if the line coordinates are close enough
- * to not repeat them
+ * to not repeat them, right now the ratio is 1 so this method is equivalent to regular '==' operator.
  */
 function approxeq(num1, num2, okRatio) {
     if (okRatio == null)
@@ -79,12 +85,11 @@ function addArcPoints(drawing, polyline) {
     polyline.push(centerPoint)
 }
 
-//**Lj stands for Line Json and Pj stands for Polyline json */
-exports.add_pointarray = async (Lj) => {
-    let drawingsArray = Lj.layerFromDxfSource.layerDrawings;
-    //console.dir(drawingsArray);
+//**DxfJsonInitial and Pj stands for Polyline json */
+exports.add_pointarray = async (DxfJsonI) => {
+    let drawingsArray = DxfJsonI.layerFromDxfSource.layerDrawings;
     let polyline = [];
-    let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};
+    let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};// initialize, used to not put repeated points
     for (let i = 0; i < drawingsArray.length; i++) {
         if (drawingsArray[i].code_00_drawingType == 'LINE') {
             lastPoint = addLinePoints(drawingsArray[i], polyline, lastPoint);
@@ -101,11 +106,12 @@ exports.add_pointarray = async (Lj) => {
     Lj.layerFromDxfSource.polyline = polyline;
     delete Lj.layerFromDxfSource.layerDrawings;
 
-    
+    /*
+    // for debugging purposes
     let data = util.inspect(polyline, false, null);
     fs.writeFile('LjToPj_LOGFILE', data);
+    */
 
     return Lj;
 
-    //console.log(sortedLines);
 }
