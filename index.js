@@ -1,5 +1,5 @@
 const {dxfToJson}= require("./dxfToJson");
-const {LjToPj}= require("./LjToPj");
+const {add_pointarray}= require("./add_pointarray");
 const Oldfs = require('fs');
 const util = require('util');
 const fs = Oldfs.promises;
@@ -15,6 +15,7 @@ exports.cloudFunction = async (req, res) => {
                 let layerName = req.body.layerName ?? req.body.layername ?? req.body.Layername ?? req.body.LayerName;
                 let url = req.body.url ?? req.body.URL ?? req.body.Url;
                 json = await dxfToJson(url,layerName);
+                add_pointarray(json);
                 res.send(json);
             }
             catch(error){
@@ -50,13 +51,14 @@ exports.cloudFunction = async (req, res) => {
 async function testFunction(){
     url = "https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3"
     json = await dxfToJson(url,"PMISUNDER");
-    LjToPj(json);
-    //let data = util.inspect(json, false, null);
-    //fs.writeFile('testJson', data);
+    add_pointarray(json);
+    let data = util.inspect(json, true, null);
+    fs.writeFile('testJson', data);
     
 }
 
-testFunction();
+//testFunction();
+
   
   
 
