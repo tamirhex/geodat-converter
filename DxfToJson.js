@@ -32,8 +32,8 @@ exports.dxfToJson = async (url,layerName) => {
         const requestedTypes = ["LINE","AcDbPolyline","LWPOLYLINE"]; // for some reason only returns line
         //* filters the dxf for requested layers and types within a layer *//
 
-        const result = theObject.filter(key => key?.layer == requestedLayers[0] && //*requestedLayers[0] because currently only possible to request a single layer from API.
-                    requestedTypes.includes(key?.type));
+        const result = theObject.filter(key => key?.layer == requestedLayers[0] /*&& //*requestedLayers[0] because currently only possible to request a single layer from API.
+                    requestedTypes.includes(key?.type)*/);
        /* const result = theObject.filter(key => //*requestedLayers[0] because currently only possible to request a single layer from API.
             key.type == "AcDbPolyline");*/
         //* building the initial object of layer before inserting all drawings of layer*//
@@ -64,7 +64,7 @@ exports.dxfToJson = async (url,layerName) => {
         //*fills layerDrawings array with json objects describing the drawings*//
         if(result != []){
             for(i in result){
-                filteredObj.layerFromDxfSource.layerDrawings[i] = 
+                filteredObj.layerFromDxfSource.layerDrawings[i] = result[i];/*
                 {
                     "code_00_drawingType":result[i]?.type,
                     "code_10_startXeastLng":result[i]?.start?.x,
@@ -76,7 +76,7 @@ exports.dxfToJson = async (url,layerName) => {
                     "code_40_circleArcRadius":result[i]?.r,
                     "code_50_startArcAngle":result[i]?.startAngle,
                     "code_51_endArcAngle":result[i]?.endAngle
-                }
+                }*/
             }
         }
         else{
