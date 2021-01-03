@@ -8,9 +8,9 @@ const fs = Oldfs.promises;
 
 
 exports.cloudFunction = async (req, res) => {
-    switch (req.method){
+    switch (req.method) {
         case 'POST':
-            try{
+            try {
                 //question marks notation for a bit of case insensivity, takes the non-null value
                 let layerName = req.body.layerName ?? req.body.layername ?? req.body.Layername ?? req.body.LayerName;
                 let url = req.body.url ?? req.body.URL ?? req.body.Url;
@@ -18,13 +18,13 @@ exports.cloudFunction = async (req, res) => {
                 add_pointarray(json);
                 res.send(json);
             }
-            catch(error){
+            catch (error) {
                 res.send("Error occured, red.body.url is " + req.body.url +
                 "req.body.layerName is " + req.body.layerName + "\n error is " + error);
             }
             break;
-        case 'GET'://*not fully working yet
-            try{
+        case 'GET': //*not fully working yet
+            try {
                 url = decodeURIComponent(req.query.url ?? req.query.URL);
                 layerName = req.query.layerName ?? req.query.layername ?? req.query.LAYERNAME;
                 //res.send("layername: " + layerName + "url " + url);
@@ -39,7 +39,7 @@ exports.cloudFunction = async (req, res) => {
                 res.send(string);
                 */
             }
-            catch (error){
+            catch (error) {
                 res.send("An error has occured: " + error);
             }
             break;
@@ -49,7 +49,7 @@ exports.cloudFunction = async (req, res) => {
   };
 
 // debugging function
-async function testFunction(){
+async function testFunction() {
     url = "https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3"
     json = await dxfToJson(url,"PMISUNDER");
     add_pointarray(json);
