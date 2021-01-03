@@ -28,7 +28,7 @@ exports.cloudFunction = async (req, res) => {
                 url = decodeURIComponent(req.query.url ?? req.query.URL);
                 layerName = req.query.layerName ?? req.query.layername ?? req.query.LAYERNAME;
                 //res.send("layername: " + layerName + "url " + url);
-                json = await dxfToJson(url,layerName);
+                json = await dxfToaddJson(url,layerName);
                 res.set({ 'content-type': 'application/json; charset=utf-8' });
                 res.send("url is " + url + "layername is " + layerName + "json if"+json);
                 /*
@@ -54,7 +54,7 @@ async function testFunction(){
     json = await dxfToJson(url,"PMISUNDER");
     add_pointarray(json);
     let data = util.inspect(json, true, null);
-    fs.writeFile('testJson', data);
+    fs.writeFile('./job description/testJson', data);
     
 }
 // for debugging purposes

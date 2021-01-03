@@ -81,7 +81,6 @@ function addArcPoints(drawing, polyline) {
         "zElv":  0
         }
     }
-    console.log(`pushing point ${centerPoint.point.xLng},${centerPoint.point.yLat}`);
     polyline.push(centerPoint)
 }
 
@@ -103,15 +102,15 @@ exports.add_pointarray = async (DxfJsonI) => {
 
 
 
-    Lj.layerFromDxfSource.polyline = polyline;
-    delete Lj.layerFromDxfSource.layerDrawings;
+    DxfJsonI.layerFromDxfSource.polyline = polyline;
+    delete DxfJsonI.layerFromDxfSource.layerDrawings;
 
     /*
     // for debugging purposes
     let data = util.inspect(polyline, false, null);
-    fs.writeFile('LjToPj_LOGFILE', data);
+    fs.writeFile('./job description/DxfJsonIToPj_LOGFILE', data);
     */
 
-    return Lj;
+    return DxfJsonI;
 
 }

@@ -18,24 +18,15 @@ exports.dxfToJson = async (url,layerName) => {
         //* parsing the dxf recieving a parsed object  *//
         const helper = new Helper(dataString);
         theObject = helper.parsed.entities;
-        /*
-        let drawingTypeString = "";
-        for (something in theObject){
-            drawingTypeString += something.type + "\n";
-        }
-        fs.writeFile("types.txt",drawingTypeString);
-        */
 
         //* filters the dxf for requested layers and types within a layer *//
         const requestedLayers = [layerName];
-        //const requestedTypes = ["LINE","AcDbPolyline","LWPOLYLINE"];
         const requestedTypes = ["LINE", "ARC", "AcDbPolyline", "LWPOLYLINE"];
         //* filters the dxf for requested layers and types within a layer *//
 
         const result = theObject.filter(key => key?.layer == requestedLayers[0] && //requestedLayers[0] because currently only possible to request a single layer from API.
                     requestedTypes.includes(key?.type));
-       /* const result = theObject.filter(key => //*requestedLayers[0] because currently only possible to request a single layer from API.
-            key.type == "AcDbPolyline");*/
+
         //* building the initial object of layer before inserting all drawings of layer*//
         filteredObj = {
             "version":
