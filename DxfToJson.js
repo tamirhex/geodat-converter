@@ -33,7 +33,7 @@ exports.dxfToJson = async (url,layerName) => {
             {
                 "title":"DXF Converted to JSON",
                 "objectName":"???",
-                "versionTimestamp":"2020.29.12"
+                "versionTimestamp":"2020.06.01"
             },
             "metadata":
             {

@@ -14,8 +14,10 @@ exports.cloudFunction = async (req, res) => {
                 //question marks notation for a bit of case insensivity, takes the non-null value
                 let layerName = req.body.layerName ?? req.body.layername ?? req.body.Layername ?? req.body.LayerName;
                 let url = req.body.url ?? req.body.URL ?? req.body.Url;
+                let dmax = req.body?.dmax;
+                if (!dmax) dmax = 0.4;
                 json = await dxfToJson(url,layerName);
-                add_pointarray(json);
+                add_pointarray(json, dmax);
                 res.send(json);
             }
             catch (error) {
@@ -52,11 +54,13 @@ exports.cloudFunction = async (req, res) => {
 async function testFunction() {
     url = "https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3"
     json = await dxfToJson(url,"PMISUNDER");
-    add_pointarray(json);
+    let dmax = 0.4;
+    add_pointarray(json, dmax);
     /*
     let data = util.inspect(json, true, null);
     fs.writeFile('./job description/testJson', data);
     */
+    
     
 }
 // for debugging purposes

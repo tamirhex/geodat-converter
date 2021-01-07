@@ -71,14 +71,57 @@ function addLinePoints(drawing, polyline, lastPoint){
     return point1;
 }
 
-function addArcPoints(drawing, polyline) {
+function getMaxAngle(dmax, r) {
+    let dhalf = dmax / 2;
+    let ehalf = Math.asin(dhalf / r);
+
+    return (ehalf * 2);
+
+}
+
+function addArcPoints(drawing, polyline, dmax) {
     // For ARC type, there is only center x,y ; so startX is same as endX, so is for y.
-    let x0 = drawing.code_10_startXeastLng;
-    let y0 = drawing.code_20_startYnorthLat;
-    let r = drawing.code_40_circleArcRadius;
-    let d0 = drawing.code_50_startArcAngle;
-    let d1 = drawing.code_51_endArcAngle;
+    const x0 = drawing.code_10_startXeastLng;
+    const y0 = drawing.code_20_startYnorthLat;
+    const r = drawing.code_40_circleArcRadius;
+    const d0 = drawing.code_50_startArcAngle;
+    const d1 = drawing.code_51_endArcAngle;
+
+    const angle_interval = getMaxAngle(dmax, r);
+    const angleLimit = d1;
     let pointArray = [];
+    let angleArray = [d0];
+
+    let currentAngle = d0 + angle_interval;
+    while (currentAngle <= angleLimit){
+        angleArray.push(currentAngle);
+        currentAngle += angle_interval;
+    }
+    angleArray.push(d1);
+    console.log(angleArray);
+
+    // Now I have a list of angles to create points from them to resemble an arc
+    //let counter = 0; //debugging
+    for (const angle of angleArray) {
+        let dx = r * Math.cos(angle);
+        let dy = r * Math.sin(angle);
+        
+        let point = {
+            'point': {
+                "xLng": x0 + dx,
+                "yLat": y0 + dy,
+                "zElv":  0,
+                //"fromArc": counter
+            }
+        }
+       // counter++; //debugging
+        pointArray.push(point);
+    }
+    polyline.push(...pointArray);
+    
+
+
+    /*
     for (let i = 1; i <= 19; i++) {
         let angle = d0 + ((i * 5) / 100) * (d1 - d0);
         let dx = r * Math.cos(angle);
@@ -95,6 +138,7 @@ function addArcPoints(drawing, polyline) {
         pointArray.push(point);
     }
     polyline.push(...pointArray);
+    */
 /*
     let middleAngle = (d0 + d1)/2;
     let dx = r * Math.cos(middleAngle);
@@ -111,7 +155,7 @@ function addArcPoints(drawing, polyline) {
 }
 
 //**DxfJsonInitial and Pj stands for Polyline json */
-exports.add_pointarray = async (DxfJsonI) => {
+exports.add_pointarray = async (DxfJsonI, dmax) => {
     let drawingsArray = DxfJsonI.layerFromDxfSource.layerDrawings;
     let polyline = [];
     let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};// initialize, used to not put repeated points
@@ -119,7 +163,7 @@ exports.add_pointarray = async (DxfJsonI) => {
         if (drawingsArray[i].code_00_drawingType == 'LINE') {
             lastPoint = addLinePoints(drawingsArray[i], polyline, lastPoint);
         } else if (drawingsArray[i].code_00_drawingType == 'ARC') {
-            addArcPoints(drawingsArray[i], polyline);
+            addArcPoints(drawingsArray[i], polyline, dmax);
         }
     }
 
