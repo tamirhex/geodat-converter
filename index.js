@@ -7,6 +7,8 @@ const fs = Oldfs.promises;
 
 
 
+
+
 exports.cloudFunction = async (req, res) => {
     switch (req.method) {
         case 'POST':
@@ -56,15 +58,33 @@ async function testFunction() {
     json = await dxfToJson(url,"PMISUNDER");
     let dmax = 0.4;
     add_pointarray(json, dmax);
-    /*
-    let data = util.inspect(json, true, null);
-    fs.writeFile('./job description/testJson', data);
-    */
+    anotherfunction(json);
+    //let data = util.inspect(json,{maxArrayLength: null, depth:null});
+    //fs.writeFile('./job description/testJson', data);
+    let data = JSON.stringify(json);
+    fs.writeFile('data.json', data);
+    
     
     
 }
+
+function anotherfunction(json){
+    const polyline = json.layerFromDxfSource.polyline;
+    
+    let x = [];
+    let y = [];
+    let points = [];
+    for (value of polyline) {
+        x.push(value.point.xLng);
+        y.push(value.point.yLat);
+    }
+
+    //pythonPlot(x, y);
+
+}
 // for debugging purposes
-//testFunction();
+testFunction();
+//anotherfunction();
 
   
   
