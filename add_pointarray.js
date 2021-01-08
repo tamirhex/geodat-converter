@@ -78,16 +78,13 @@ function getMaxAngle(dmax, r) {
     return (ehalf * 2);
 
 }
-
-function addArcPoints(drawing, polyline, dmax) {
-    // For ARC type, there is only center x,y ; so startX is same as endX, so is for y.
+function addArcPointsAbs(drawing, polyline, dmax){
     const x0 = drawing.code_10_startXeastLng;
     const y0 = drawing.code_20_startYnorthLat;
     const r = drawing.code_40_circleArcRadius;
     const d0 = drawing.code_50_startArcAngle;
     const d1 = drawing.code_51_endArcAngle;
 
-    
     const angle_interval = getMaxAngle(dmax, r);
     const angleLimit = d1;
     let pointArray = [];
@@ -141,7 +138,17 @@ function addArcPoints(drawing, polyline, dmax) {
     
 
 
-    /*
+}
+
+function addArcPoints(drawing, polyline, dmax) {
+    // For ARC type, there is only center x,y ; so startX is same as endX, so is for y.
+    const x0 = drawing.code_10_startXeastLng;
+    const y0 = drawing.code_20_startYnorthLat;
+    const r = drawing.code_40_circleArcRadius;
+    const d0 = drawing.code_50_startArcAngle;
+    const d1 = drawing.code_51_endArcAngle;
+
+    pointArray = [];
     for (let i = 1; i <= 19; i++) {
         let angle = d0 + ((i * 5) / 100) * (d1 - d0);
         let dx = r * Math.cos(angle);
@@ -158,20 +165,8 @@ function addArcPoints(drawing, polyline, dmax) {
         pointArray.push(point);
     }
     polyline.push(...pointArray);
-    */
-/*
-    let middleAngle = (d0 + d1)/2;
-    let dx = r * Math.cos(middleAngle);
-    let dy = r * Math.sin(middleAngle);
+    
 
-
-    let centerPoint = {'point': {
-        "xLng": x0 + dx,
-        "yLat": y0 + dy,
-        "zElv":  0
-        }
-    }
-    polyline.push(centerPoint)*/
 }
 
 //**DxfJsonInitial and Pj stands for Polyline json */
@@ -183,7 +178,7 @@ exports.add_pointarray = async (DxfJsonI, dmax) => {
         if (drawingsArray[i].code_00_drawingType == 'LINE') {
             lastPoint = addLinePoints(drawingsArray[i], polyline, lastPoint);
         } else if (drawingsArray[i].code_00_drawingType == 'ARC') {
-            addArcPoints(drawingsArray[i], polyline, dmax);
+            addArcPointsAbs(drawingsArray[i], polyline, dmax);
         }
     }
 
