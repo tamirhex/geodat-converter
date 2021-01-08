@@ -61,8 +61,10 @@ async function testFunction() {
     anotherfunction(json);
     //let data = util.inspect(json,{maxArrayLength: null, depth:null});
     //fs.writeFile('./job description/testJson', data);
-    let data = JSON.stringify(json);
-    fs.writeFile('data.json', data);
+
+    //FOR PYTHON PLOT
+    //let data = JSON.stringify(json);
+   // fs.writeFile('data.json', data);
     
     
     
@@ -83,7 +85,7 @@ function anotherfunction(json){
 
 }
 // for debugging purposes
-testFunction();
+//testFunction();
 //anotherfunction();
 
   

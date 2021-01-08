@@ -84,18 +84,11 @@ function addArcPointsAbs(drawing, polyline, dmax){
     const r = drawing.code_40_circleArcRadius;
     const d0 = drawing.code_50_startArcAngle;
     const d1 = drawing.code_51_endArcAngle;
-
     const angle_interval = getMaxAngle(dmax, r);
     const angleLimit = d1;
     let pointArray = [];
-    let angleArray = [d0];
-    if(angle_interval < 0)
-        console.log("ERROR ANGLE INTERVAL NEGATIVE");
-    if(Math.abs((d1-d0)) > 10) console.log("BIGGER THAN 90"); 
-    if(d1 < 0)
-        console.log("AAA");
-    if(d0 < 0)
-        console.log("BBB");
+    let angleArray = [];
+    angleArray.push(d0);
     let currentAngle = d0 + angle_interval;
     while (currentAngle <= angleLimit){
         angleArray.push(currentAngle);
@@ -105,7 +98,8 @@ function addArcPointsAbs(drawing, polyline, dmax){
     //console.log(angleArray);  
 
     // Now I have a list of angles to create points from them to resemble an arc
-    let counter = 0; //debugging
+    //let counter = 0; //debugging
+    let angle1 = d0;
     for (const angle of angleArray) {
         let dx = r * Math.cos(angle);
         let dy = r * Math.sin(angle);
@@ -115,24 +109,13 @@ function addArcPointsAbs(drawing, polyline, dmax){
                 "xLng": x0 + dx,
                 "yLat": y0 + dy,
                 "zElv":  0,
-                "fromArc": counter
+                //"fromArc": counter
             }
         }
-        counter++; //debugging
+        //counter++; //debugging
         pointArray.push(point);
     }
-    //console.log(`${pointArray.length * dmax} vs ${Math.PI * r}`);
-    if (pointArray.length * 0.4 >= Math.PI * r)
-        console.log("BIG ARC");
-    if (pointArray.length * 0.4 > 20) {
-        console.log(`r = ${r} d0 = ${d0} d1 = ${d1}`);
-        pointArray.push({'point': {
-                "xLng": 0,
-                "yLat": 0,
-                "zElv":  0,
-                "fromArc": "WAS HERE"
-            }});
-    }
+    
 
     polyline.push(...pointArray);
     
@@ -150,7 +133,8 @@ function addArcPoints(drawing, polyline, dmax) {
 
     pointArray = [];
     for (let i = 1; i <= 19; i++) {
-        let angle = d0 + ((i * 5) / 100) * (d1 - d0);
+        //let angle = d0 + ((i * 5) / 100) * (d1 - d0);
+        let angle = d0 + 0.05;
         let dx = r * Math.cos(angle);
         let dy = r * Math.sin(angle);
 
