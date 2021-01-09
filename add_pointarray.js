@@ -73,7 +73,7 @@ function addLinePoints(drawing, polyline, lastPoint){
 
 function getMaxAngle(dmax, r) {
     let dhalf = dmax / 2;
-    let ehalf = Math.asin(dhalf / r);
+    let ehalf = Math.asin(dhalf / r) * (180 / Math.PI);
 
     return (ehalf * 2);
 
@@ -84,6 +84,7 @@ function addArcPointsAbs(drawing, polyline, dmax){
     const r = drawing.code_40_circleArcRadius;
     const d0 = drawing.code_50_startArcAngle;
     const d1 = drawing.code_51_endArcAngle;
+    
     const angle_interval = getMaxAngle(dmax, r);
     const angleLimit = d1;
     let pointArray = [];
@@ -99,7 +100,6 @@ function addArcPointsAbs(drawing, polyline, dmax){
 
     // Now I have a list of angles to create points from them to resemble an arc
     //let counter = 0; //debugging
-    let angle1 = d0;
     for (const angle of angleArray) {
         let dx = r * Math.cos(angle);
         let dy = r * Math.sin(angle);

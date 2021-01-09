@@ -63,8 +63,8 @@ async function testFunction() {
     //fs.writeFile('./job description/testJson', data);
 
     //FOR PYTHON PLOT
-    //let data = JSON.stringify(json);
-   // fs.writeFile('data.json', data);
+    let data = JSON.stringify(json);
+    fs.writeFile('data2.json', data);
     
     
     
