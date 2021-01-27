@@ -17,7 +17,7 @@ exports.cloudFunction = async (req, res) => {
                 let layerName = req.body.layerName ?? req.body.layername ?? req.body.Layername ?? req.body.LayerName;
                 let url = req.body.url ?? req.body.URL ?? req.body.Url;
                 let dmax = req.body?.dmax;
-                if (!dmax) dmax = 0.4;
+                if (!dmax) dmax = 2;
                 json = await dxfToJson(url,layerName);
                 add_pointarray(json, dmax);
                 res.send(json);
@@ -64,7 +64,7 @@ async function testFunction() {
 
     //FOR PYTHON PLOT
     let data = JSON.stringify(json);
-    fs.writeFile('data2.json', data);
+    fs.writeFile('data3.json', data);
     
     
     
@@ -85,8 +85,8 @@ function anotherfunction(json){
 
 }
 // for debugging purposes
-//testFunction();
-//anotherfunction();
+testFunction();
+
 
   
   
