@@ -17,9 +17,11 @@ exports.cloudFunction = async (req, res) => {
                 let layerName = req.body.layerName ?? req.body.layername ?? req.body.Layername ?? req.body.LayerName;
                 let url = req.body.url ?? req.body.URL ?? req.body.Url;
                 let dmax = req.body?.dmax;
-                if (!dmax) dmax = 2;
+                let sections = req.body?.sections;
+                if (!dmax) dmax = 0.4;
+                if (!sections) sections = false;
                 json = await dxfToJson(url,layerName);
-                add_pointarray(json, dmax);
+                add_pointarray(json, dmax, sections);
                 res.send(json);
             }
             catch (error) {
@@ -55,16 +57,27 @@ exports.cloudFunction = async (req, res) => {
 // debugging function
 async function testFunction() {
     url = "https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3"
-    json = await dxfToJson(url,"PMISUNDER");
+    json1 = await dxfToJson(url,"PMISUNDER"); // for regular polyline
+    json = await dxfToJson(url,"PIPELINE-61$0$SECTIONS_NAME3"); //for sections
     let dmax = 0.4;
-    add_pointarray(json, dmax);
-    anotherfunction(json);
-    //let data = util.inspect(json,{maxArrayLength: null, depth:null});
-    //fs.writeFile('./job description/testJson', data);
+    let sections = true;
+    add_pointarray(json, dmax, sections);
+    //anotherfunction(json);
+
+    let data = util.inspect(json,{maxArrayLength: null, depth:null});
+    fs.writeFile('./job description/testJson', data);
 
     //FOR PYTHON PLOT
-    let data = JSON.stringify(json);
-    fs.writeFile('data3.json', data);
+    if (sections) {
+        let data1 = JSON.stringify(json);
+        fs.writeFile('datasections.json', data1);
+    }
+    else {
+        let data2 = JSON.stringify(json1);
+        fs.writeFile('datapolyline.json', data2);
+    }
+
+
     
     
     
@@ -85,8 +98,8 @@ function anotherfunction(json){
 
 }
 // for debugging purposes
-testFunction();
-
+//testFunction();
+//anotherfunction();
 
   
   

@@ -33,6 +33,54 @@ function approxeq(num1, num2, okRatio) {
     }
 }
 
+function getLinePoints(drawing, counter){
+    const x0 = drawing.code_10_startXeastLng;
+    const x1 = drawing.code_11_endXeastLng;
+    const y0 = drawing.code_20_startYnorthLat;
+    const y1 = drawing.code_21_endYnorthLat; 
+
+    const pointi = {
+        'point': {
+            "xLng": x0,
+            "yLat": y0,
+            "zElv":  0
+        }
+    }
+
+    const pointm = {
+        'point': {
+            "xLng": (x1 - x0) / 2,
+            "yLat": (y1 - y0) / 2,
+            "zElv":  0
+        }
+    }
+
+    const pointf = {
+        'point': {
+            "xLng": x1,
+            "yLat": y1,
+            "zElv":  0
+        }
+    }
+
+    //We find the angle compared to the middle point to know the orientation of the line
+    //Therefore we look at middle as (0,0),and get the angle with the cordinates of the final point
+    const y = pointf.point.yLat - pointm.point.yLat;
+    const x = pointf.point.xLng; - pointf.point.XLng;
+
+    const angle = Math.atan2(y, x); // IN RADIANS
+
+    const pointsObject = {
+        'pointi' : pointi,
+        'pointm' : pointm,
+        'pointf' : pointf,
+        'angle' : angle,
+        'counter' : counter
+    }
+    //sectionsArray[i].pointi.point.xLng
+    return pointsObject;
+}
+
 
 function addLinePoints(drawing, polyline, lastPoint){
     x0 = drawing.code_10_startXeastLng;
@@ -54,6 +102,7 @@ function addLinePoints(drawing, polyline, lastPoint){
             "zElv":  0
         }
     }
+
 
     if (lastPoint.point.xLng == 0) {// initialize first point in polyline 
         polyline.push(point0,point1)
@@ -77,21 +126,7 @@ function getMaxAngle(dmax, r) {
     return (ehalf * 2);
 
 }
-
-function distance(point1,lastPoint){
-    const x = lastPoint.point.xLng- point1.point.xLng.x;
-    const y = lastPoint.point.yLag - point1.point.yLat;
-    return Math.sqrt((x*x) + (y*y));
-    console.log("distance")
-}
-
-const sortByDistance = (pointArray, point) => {
-    console.log("Sortying");
-    const sorter = (a, b) => distance(a, point) - distance(b, point);
-    pointArray.sort(sorter);
- };
-
-function addArcPointsAbs(drawing, polyline, dmax, lastPoint){
+function addArcPointsAbs(drawing, polyline, dmax){
     const x0 = drawing.code_10_startXeastLng;
     const y0 = drawing.code_20_startYnorthLat;
     const r = drawing.code_40_circleArcRadius;
@@ -107,53 +142,31 @@ function addArcPointsAbs(drawing, polyline, dmax, lastPoint){
         angleArray.push(currentAngle);
         currentAngle += angle_interval;
     }
-    //angleArray.push(d0 + 0.3 * (d1 - d0));
-    //angleArray.push(d0 + 0.5 * (d1 - d0));
-    //angleArray.push(d0 + 0.7 * (d1 - d0)); //debugging
-    
     angleArray.push(d1);
     //console.log(angleArray);  
-    let flag = false; //debugging 
+
     // Now I have a list of angles to create points from them to resemble an arc
-    let counter = 0; //debugging
+    //let counter = 0; //debugging
+    let angle1 = d0;
     for (const angle of angleArray) {
-        let angleInRadians = angle * (Math.PI / 180);
         let dx = r * Math.cos(angle);
         let dy = r * Math.sin(angle);
-
-        
         
         let point = {
             'point': {
                 "xLng": x0 + dx,
                 "yLat": y0 + dy,
                 "zElv":  0,
-                "fromArc": counter
+                //"fromArc": counter
             }
         }
-        /*
-        if(x0 + dx > 214447.9 && x0 + dx < 214471.2 && y0 + dy > 630934 && y0 + dy < 630937 ) {
-            //console.log(`d0 is ${d0} d1 is ${d1} angleArray is ${angleArray}`);
-            //console.log(`x,y is (${x0+dx},${y0+dy}) with counter = ${counter} r = ${r} and dinterval as ${angle_interval}`);
-            //console.log(`dx = ${dx} dy = ${dy} cos(angle) = ${Math.cos(angle)} sin(angle) = {${Math.sin(angle)}}`);
-            flag = true; // debugging
-        }*/
-        
-       
-        counter++; //debugging
-        
+        //counter++; //debugging
         pointArray.push(point);
     }
-    /*
-    if(!(lastPoint.point.xLng == 0 && lastPoint.point.yLat == 0))
-        //sortByDistance(pointArray, lastPoint);
-    if ( flag ) {
-        let data = util.inspect(pointArray,{maxArrayLength: null, depth:null});
-        fs.writeFile("pointArray", data);
-    }*/
+    
+
     polyline.push(...pointArray);
-    return pointArray[pointArray.length - 1];
-    //if(flag == true) console.log(`--------------------------------`);
+    
 
 
 }
@@ -168,11 +181,10 @@ function addArcPoints(drawing, polyline, dmax) {
 
     pointArray = [];
     for (let i = 1; i <= 19; i++) {
-        let angle = d0 + ((i * 5) / 100) * (d1 - d0);
-        let angleInRadians = angle * (Math.PI / 180);
-        
-        let dx = r * Math.cos(angleInRadians);
-        let dy = r * Math.sin(angleInRadians);
+        //let angle = d0 + ((i * 5) / 100) * (d1 - d0);
+        let angle = d0 + 0.05;
+        let dx = r * Math.cos(angle);
+        let dy = r * Math.sin(angle);
 
         let point = {
             'point': {
@@ -190,26 +202,40 @@ function addArcPoints(drawing, polyline, dmax) {
 }
 
 //**DxfJsonInitial and Pj stands for Polyline json */
-exports.add_pointarray = async (DxfJsonI, dmax) => {
+exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
     let drawingsArray = DxfJsonI.layerFromDxfSource.layerDrawings;
-    let polyline = [];
-    let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};// initialize, used to not put repeated points
-    for (let i = 0; i < drawingsArray.length; i++) {
-        if (drawingsArray[i].code_00_drawingType == 'LINE') {
-            lastPoint = addLinePoints(drawingsArray[i], polyline, lastPoint);
-        } else if (drawingsArray[i].code_00_drawingType == 'ARC') {
-            lastPoint = addArcPointsAbs(drawingsArray[i], polyline, dmax,lastPoint);
+    if(!sections){
+        let polyline = [];
+        let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};// initialize, used to not put repeated points
+        for (let i = 0; i < drawingsArray.length; i++) {
+            if (drawingsArray[i].code_00_drawingType == 'LINE') {
+                lastPoint = addLinePoints(drawingsArray[i], polyline, lastPoint);
+            } else if (drawingsArray[i].code_00_drawingType == 'ARC') {
+                addArcPointsAbs(drawingsArray[i], polyline, dmax);
+            }
         }
+        DxfJsonI.layerFromDxfSource.polyline = polyline;
+    }
+    else{ //IN LAYER OF SECTIONS
+        let sectionCounter = 0;
+        let sectionLineArray = [];
+        for (let i = 0; i < drawingsArray.length; i++) {
+            if (drawingsArray[i].code_00_drawingType == 'LINE'){
+                sectionLine = getLinePoints(drawingsArray[i], sectionCounter);
+                sectionCounter++;
+                sectionLineArray.push(sectionLine);
+            }
+        }
+        DxfJsonI.layerFromDxfSource.sectionsArray = sectionLineArray;
     }
 
-    sortByDistance(polyline,polyline[0]);
 
       
 
 
 
 
-    DxfJsonI.layerFromDxfSource.polyline = polyline;
+    
     delete DxfJsonI.layerFromDxfSource.layerDrawings;
 
     /*
