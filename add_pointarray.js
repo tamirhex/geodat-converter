@@ -49,8 +49,8 @@ function getLinePoints(drawing, counter){
 
     const pointm = {
         'point': {
-            "xLng": (x1 - x0) / 2,
-            "yLat": (y1 - y0) / 2,
+            "xLng": (x1 - x0) / 2 + x0,
+            "yLat": (y1 - y0) / 2 + y0,
             "zElv":  0
         }
     }
