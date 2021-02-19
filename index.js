@@ -98,7 +98,7 @@ function anotherfunction(json){
 
 }
 // for debugging purposes
-//testFunction();
+testFunction();
 //anotherfunction();
 
   
