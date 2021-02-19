@@ -65,16 +65,16 @@ async function testFunction() {
     //anotherfunction(json);
 
     let data = util.inspect(json,{maxArrayLength: null, depth:null});
-    fs.writeFile('./job description/testJson', data);
+    fs.writeFile('./testLogs/testJson', data);
 
     //FOR PYTHON PLOT
     if (sections) {
         let data1 = JSON.stringify(json);
-        fs.writeFile('datasections.json', data1);
+        fs.writeFile('./testlogs/datasections.json', data1);
     }
     else {
         let data2 = JSON.stringify(json1);
-        fs.writeFile('datapolyline.json', data2);
+        fs.writeFile('./testlogs/datapolyline.json', data2);
     }
 
 
