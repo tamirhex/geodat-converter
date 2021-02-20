@@ -35,7 +35,7 @@ catch (error) {
 })
 
 app.get('/', (req, res) => {
-  res.send('Hello from App Engine!');
+  res.send('Hello from App Engine deployed from cloud build push trigger!');
 });
 
 
