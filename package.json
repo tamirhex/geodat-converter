@@ -13,10 +13,6 @@
     "@plotly/point-cluster": "^3.1.9",
     "axios": "^0.21.1",
     "dxf": "^4.4.2",
-    "express": "^4.17.1",
-    "nodeplotlib": "^0.7.1",
-    "point-cluster": "^3.1.8",
-    "regl": "^2.0.1",
-    "regl-line2d": "^3.1.0"
+    "express": "^4.17.1"
   }
 }
