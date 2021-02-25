@@ -7,5 +7,8 @@ To deploy to cloud run enter this in the console :
 gcloud functions deploy dxfToJson --entry-point cloudFunction --runtime nodejs14 --trigger-http --allow-unauthenticated  --region europe-west3 --memory 2GB
 
 
+gcloud functions deploy test-cloudtrigger --runtime nodejs14 --trigger-resource dxf-files --trigger-event google.storage.object.finalize --entry-point cloudFunction --region europe-west3 --memory 1GB 
+
+
 
 
