@@ -203,41 +203,44 @@ function addArcPoints(drawing, polyline, dmax) {
 
 //**DxfJsonInitial and Pj stands for Polyline json */
 exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
-    let drawingsArray = DxfJsonI.layerFromDxfSource.layerDrawings;
-    if(!sections){
-        let polyline = [];
-        let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};// initialize, used to not put repeated points
-        for (let i = 0; i < drawingsArray.length; i++) {
-            if (drawingsArray[i].code_00_drawingType == 'LINE') {
-                lastPoint = addLinePoints(drawingsArray[i], polyline, lastPoint);
-            } else if (drawingsArray[i].code_00_drawingType == 'ARC') {
-                addArcPointsAbs(drawingsArray[i], polyline, dmax);
-            }
-        }
-        DxfJsonI.layerFromDxfSource.polyline = polyline;
-    }
-    else{ //IN LAYER OF SECTIONS
-        console.log("in sections area");
-        let sectionCounter = 0;
-        let sectionLineArray = [];
-        for (let i = 0; i < drawingsArray.length; i++) {
-            if (drawingsArray[i].code_00_drawingType == 'LINE'){
-                sectionLine = getLinePoints(drawingsArray[i], sectionCounter);
-                sectionCounter++;
-                sectionLineArray.push(sectionLine);
-            }
-        }
-        DxfJsonI.layerFromDxfSource.sectionsArray = sectionLineArray;
-    }
+    let layerObjArray = DxfJsonI.layerFromDxfSource;
+    for (let i in layerObjArray){ 
+      let drawingsArray = DxfJsonI.layerFromDxfSource[i].layerDrawings;
+      if(!sections){
+          let polyline = [];
+          let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};// initialize, used to not put repeated points
+          for (let i = 0; i < drawingsArray.length; i++) {
+              if (drawingsArray[i].code_00_drawingType == 'LINE') {
+                  lastPoint = addLinePoints(drawingsArray[i], polyline, lastPoint);
+              } else if (drawingsArray[i].code_00_drawingType == 'ARC') {
+                  addArcPointsAbs(drawingsArray[i], polyline, dmax);
+              }
+          }
+          DxfJsonI.layerFromDxfSource[i].polyline = polyline;
+      }
+      else{ //IN LAYER OF SECTIONS
+          console.log("in sections area");
+          let sectionCounter = 0;
+          let sectionLineArray = [];
+          for (let i = 0; i < drawingsArray.length; i++) {
+              if (drawingsArray[i].code_00_drawingType == 'LINE'){
+                  sectionLine = getLinePoints(drawingsArray[i], sectionCounter);
+                  sectionCounter++;
+                  sectionLineArray.push(sectionLine);
+              }
+          }
+          DxfJsonI.layerFromDxfSource[i].sectionsArray = sectionLineArray;
+      }
+
+
+        
+
+
 
 
       
-
-
-
-
-    
-    delete DxfJsonI.layerFromDxfSource.layerDrawings;
+      delete DxfJsonI.layerFromDxfSource[i].layerDrawings;
+  }
 
     /*
     // for debugging purposes
