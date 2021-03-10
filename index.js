@@ -27,9 +27,9 @@ app.post('/', async function (req, res) {
     json = await dxfToJson(url,layerName, sections);
     add_pointarray(json, dmax);
     if(sections)
-      console.log("sections is true");
+      console.log("sections is true!");
     else
-      console.log("sections is false");
+      console.log("sections is false!");
     res.send(json);
     if (sections) {
       let data1 = JSON.stringify(json);

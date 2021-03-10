@@ -12,3 +12,8 @@ datapolyline.json
 datasections.json
 \testLogs
 cftest.js
+\env_variables
+gitignore
+.gitignore
+.gcloudignore
+
