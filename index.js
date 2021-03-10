@@ -22,7 +22,16 @@ app.post('/', async function (req, res) {
     let url = req.body.url ?? req.body.URL ?? req.body.Url;
     let dmax = req.body?.dmax;
     let sections = req.body?.sections ?? req.body?.section;
-    if(!sections || !Array.isArray(sections)) sections = [];
+    //** lets sections property in request to be either a string or an array of strings */
+    if(!sections){
+      sections = [];
+    } else if (typeof sections == 'string') {
+      sections = [sections];
+    } else if (!Array.isArray(sections)) {
+      sections = [];
+    }
+
+    
     if (!dmax) dmax = 0.4;
     json = await dxfToJson(url,layers, sections);
     add_pointarray(json, dmax, sections);
