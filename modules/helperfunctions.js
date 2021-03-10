@@ -3,7 +3,7 @@ const util = require('util');
 const fs = Oldfs.promises;
 
 /**
- * If we are in development enviroment write a log file of the json object given.
+ * If we are in development environment write a log file of the json object given.
  * @param {Object} json 
  * @param {string} fileName 
  */

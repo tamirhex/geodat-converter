@@ -206,7 +206,8 @@ exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
     let layerObjArray = DxfJsonI.layerFromDxfSource;
     for (let i in layerObjArray){ 
       let drawingsArray = DxfJsonI.layerFromDxfSource[i].layerDrawings;
-      if(!sections){
+      if(!(sections.includes(layerObjArray[i].layerName))){
+          console.log("not in sections");
           let polyline = [];
           let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};// initialize, used to not put repeated points
           for (let i = 0; i < drawingsArray.length; i++) {

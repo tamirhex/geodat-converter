@@ -21,17 +21,15 @@ app.post('/', async function (req, res) {
     let layers = req.body.layers ?? req.body.Layers ?? req.body.layer ?? req.body.Layer ?? req.body.layerName;
     let url = req.body.url ?? req.body.URL ?? req.body.Url;
     let dmax = req.body?.dmax;
-    let sections = req.body?.sections;
+    let sections = req.body?.sections ?? req.body?.section;
+    if(!sections || !Array.isArray(sections)) sections = [];
     if (!dmax) dmax = 0.4;
-    if (!sections) sections = false;
     json = await dxfToJson(url,layers, sections);
     add_pointarray(json, dmax, sections);
-    if(sections)
-      console.log("sections is true!");
-    else
-      console.log("sections is false!");
     res.send(json);
+    /*
     if (sections) {
+      
       let data1 = JSON.stringify(json);
       console.log("Datasections file created");
       fs.writeFile('./testlogs/datasections.json', data1);
@@ -40,7 +38,15 @@ app.post('/', async function (req, res) {
       let data2 = JSON.stringify(json);
       console.log("Datapolyline file created");
       fs.writeFile('./testlogs/datapolyline.json', data2);
+  }*/
+
+  //** If on dev env then create file for debugging using python script */
+  if(process.env.NODE_ENV == "development"){
+    let data2 = JSON.stringify(json);
+    console.log("Datapolyline file created");
+    fs.writeFile('./testlogs/datapolyline.json', data2);
   }
+
 }
 catch (error) {
     res.send("Error occured, red.body.url is " + req.body.url +
