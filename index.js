@@ -24,9 +24,23 @@ app.post('/', async function (req, res) {
     let sections = req.body?.sections;
     if (!dmax) dmax = 0.4;
     if (!sections) sections = false;
-    json = await dxfToJson(url,layerName);
-    add_pointarray(json, dmax, sections);
+    json = await dxfToJson(url,layerName, sections);
+    add_pointarray(json, dmax);
+    if(sections)
+      console.log("sections is true");
+    else
+      console.log("sections is false");
     res.send(json);
+    if (sections) {
+      let data1 = JSON.stringify(json);
+      console.log("Datasections file created");
+      fs.writeFile('./testlogs/datasections.json', data1);
+  }
+  else {
+      let data2 = JSON.stringify(json);
+      console.log("Datapolyline file created");
+      fs.writeFile('./testlogs/datapolyline.json', data2);
+  }
 }
 catch (error) {
     res.send("Error occured, red.body.url is " + req.body.url +
@@ -58,7 +72,7 @@ async function testFunction() {
         fs.writeFile('./testlogs/datasections.json', data1);
     }
     else {
-        let data2 = JSON.stringify(json1);
+        let data2 = JSON.stringify(json);
         fs.writeFile('./testlogs/datapolyline.json', data2);
     }
     
@@ -82,8 +96,8 @@ function anotherfunction(json){
 //testFunction();
 //anotherfunction();
 
-// Listen to the App Engine-specified port, or 8080 otherwise
-const PORT = process.env.PORT || 8080;
+// Listen to the App Engine-specified port, or 80 otherwise
+const PORT = process.env.PORT || 80;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });

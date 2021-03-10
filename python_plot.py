@@ -4,7 +4,7 @@ import json
 
 
 def plotPolyline():
-    with open('datapolyline.json') as json_file:
+    with open('./testLogs/datapolyline.json') as json_file:
         data = json.load(json_file)
         polyline = data["layerFromDxfSource"]["polyline"]
         xArray = []
@@ -17,7 +17,7 @@ def plotPolyline():
         #json.layerFromDxfSource.polyline
 
 def plotSections():
-    with open('datasections.json') as json_file:
+    with open('./testLogs/datasections.json') as json_file:
         data = json.load(json_file)
         sectionsArray = data["layerFromDxfSource"]["sectionsArray"]
         for value in sectionsArray:
@@ -29,7 +29,14 @@ def plotSections():
 
 
 if __name__ == '__main__':
-    plotSections()
-    plotPolyline()
+    if sys.argv[1] == "sections":
+        plotSections()
+    elif sys.argv[1] == "notsections":
+        plotPolyline()
+    elif sys.argv[1] == "both":
+        plotPolyline()
+        plotSections()
+    else:
+        print("bad argument, either sections, notsections, or both")
     plt.show()
 

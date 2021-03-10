@@ -10,7 +10,6 @@
   "author": "Tamir.hexsoft",
   "license": "ISC",
   "dependencies": {
-    "@plotly/point-cluster": "^3.1.9",
     "axios": "^0.21.1",
     "dxf": "^4.4.2",
     "express": "^4.17.1"
