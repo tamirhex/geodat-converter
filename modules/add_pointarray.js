@@ -217,6 +217,7 @@ exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
         DxfJsonI.layerFromDxfSource.polyline = polyline;
     }
     else{ //IN LAYER OF SECTIONS
+        console.log("in sections area");
         let sectionCounter = 0;
         let sectionLineArray = [];
         for (let i = 0; i < drawingsArray.length; i++) {

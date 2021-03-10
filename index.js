@@ -1,5 +1,5 @@
-const {dxfToJson}= require("./dxfToJson");
-const {add_pointarray}= require("./add_pointarray");
+const {dxfToJson}= require("./modules/dxfToJson");
+const {add_pointarray}= require("./modules/add_pointarray");
 const express = require('express');
 const app = express();
 const Oldfs = require('fs');
@@ -18,14 +18,14 @@ app.post('/', async function (req, res) {
 app.post('/', async function (req, res) {
   try {
     //question marks notation for a bit of case insensivity, takes the non-null value
-    let layerName = req.body.layerName ?? req.body.layername ?? req.body.Layername ?? req.body.LayerName;
+    let layers = req.body.layers ?? req.body.Layers ?? req.body.layer ?? req.body.Layer;
     let url = req.body.url ?? req.body.URL ?? req.body.Url;
     let dmax = req.body?.dmax;
     let sections = req.body?.sections;
     if (!dmax) dmax = 0.4;
     if (!sections) sections = false;
-    json = await dxfToJson(url,layerName, sections);
-    add_pointarray(json, dmax);
+    json = await dxfToJson(url,layers, sections);
+    add_pointarray(json, dmax, sections);
     if(sections)
       console.log("sections is true!");
     else
@@ -44,7 +44,7 @@ app.post('/', async function (req, res) {
 }
 catch (error) {
     res.send("Error occured, red.body.url is " + req.body.url +
-    "req.body.layerName is " + req.body.layerName + "\n error is " + error);
+    "req.body.layers is " + req.body.layers + "\n error is " + error);
 }
 })
 
