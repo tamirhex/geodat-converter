@@ -26,6 +26,7 @@ exports.dxfToJson = async (url,layers) => {
         let requestedLayers = [];
         const requestedTypes = ["LINE", "ARC", "AcDbPolyline", "LWPOLYLINE"];
         let result;
+        //*layers can come either as a single string, as an array of strings, or empty*//
         switch(true){
           case Array.isArray(layers):
             requestedLayers = layers;
@@ -68,38 +69,52 @@ exports.dxfToJson = async (url,layers) => {
                 "infoLog" : logMessage,
                 "versionNotes": "Currently it only shows entities of type [LINE, ARC, AcDbPolyline, LWPOLYLINE]"
             },
-            "layerFromDxfSource":
+            "layerFromDxfSource": []
+            /*
+            Will have form of:
             {
-                "layerName":requestedLayers[0],
-                "layerDrawings":[],
-            }
+                "layerName":requestedLayers,
+                "layerDrawings":[{},{}],
+            }*/
         }    
         //*fills layerDrawings array with json objects describing the drawings*//
         if (result != []) {
-            for (i in result) {
-                filteredObj.layerFromDxfSource.layerDrawings[i] =
-                {
-                    "code_00_drawingType":result[i]?.type,
-                    "code_10_startXeastLng":result[i]?.start?.x ?? result[i]?.x,
-                    "code_20_startYnorthLat":result[i]?.start?.y ?? result[i]?.y,
-                    "code_30_startZelevation":result[i]?.start?.z ?? result[i]?.z,
-                    "code_11_endXeastLng":result[i]?.end?.x ?? result[i]?.x,
-                    "code_21_endYnorthLat":result[i]?.end?.y ?? result[i]?.y,
-                    "code_31_endZelevation":result[i]?.end?.z ?? result[i]?.z,
-                    "code_40_circleArcRadius":result[i]?.r,
-                    "code_50_startArcAngle":result[i]?.startAngle,
-                    "code_51_endArcAngle":result[i]?.endAngle
-                }
-                // create a list of all layers in the post response.
-                if (!(filteredObj.metadata.layersExtracted.includes(result[i]?.layer))) {
-                  filteredObj.metadata.layersExtracted.push(result[i].layer);
-                }
+            for (let i in result) {
+              drawingObject =
+              {
+                  "code_00_drawingType":result[i]?.type,
+                  "code_10_startXeastLng":result[i]?.start?.x ?? result[i]?.x,
+                  "code_20_startYnorthLat":result[i]?.start?.y ?? result[i]?.y,
+                  "code_30_startZelevation":result[i]?.start?.z ?? result[i]?.z,
+                  "code_11_endXeastLng":result[i]?.end?.x ?? result[i]?.x,
+                  "code_21_endYnorthLat":result[i]?.end?.y ?? result[i]?.y,
+                  "code_31_endZelevation":result[i]?.end?.z ?? result[i]?.z,
+                  "code_40_circleArcRadius":result[i]?.r,
+                  "code_50_startArcAngle":result[i]?.startAngle,
+                  "code_51_endArcAngle":result[i]?.endAngle
+              }
+              //** if in our layer object list there is already an object for that drawing's layer */
+              //** then add the drawing to that object's array, otherwise add the missing object*/
+              if (layerObject = filteredObj.layerFromDxfSource.find(e => e.layerName === result[i]?.layer)){
+                layerObject.layerDrawings.push(drawingObject);
+              } else {
+                filteredObj.layerFromDxfSource.push({
+                  "layerName": result[i]?.layer,
+                  "layerDrawings": [drawingObject]
+                })
+              }
+
+              // create a list of all layers in the post response.
+              if (!(filteredObj.metadata.layersExtracted.includes(result[i]?.layer))) {
+                filteredObj.metadata.layersExtracted.push(result[i].layer);
+              }
             }
         }
         else{
             filteredObj.layerFromDxfSource.layerDrawings[0] = 
                 "Error reading drawings, make sure post request is in JSON format and that the url is correct";
         }
+        devFileLog(filteredObj, "filteredObj");
         return filteredObj;
         //* Writes the object as a nice string and writes to file *//
         //let data = util.inspect(filteredObj, false, null);

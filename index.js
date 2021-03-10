@@ -18,7 +18,7 @@ app.post('/', async function (req, res) {
 app.post('/', async function (req, res) {
   try {
     //question marks notation for a bit of case insensivity, takes the non-null value
-    let layers = req.body.layers ?? req.body.Layers ?? req.body.layer ?? req.body.Layer;
+    let layers = req.body.layers ?? req.body.Layers ?? req.body.layer ?? req.body.Layer ?? req.body.layerName;
     let url = req.body.url ?? req.body.URL ?? req.body.Url;
     let dmax = req.body?.dmax;
     let sections = req.body?.sections;
