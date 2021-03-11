@@ -6,7 +6,7 @@ import json
 def plotPolyline():
     with open('./testLogs/datapolyline.json') as json_file:
         data = json.load(json_file)
-        polyline = data["layerFromDxfSource"]["polyline"]
+        polyline = data["layerFromDxfSource"][0]["polyline"]
         xArray = []
         yArray = []
         for value in polyline:

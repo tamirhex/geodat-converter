@@ -10,5 +10,10 @@ gcloud functions deploy dxfToJson --entry-point cloudFunction --runtime nodejs14
 gcloud functions deploy test-cloudtrigger --runtime nodejs14 --trigger-resource dxf-files --trigger-event google.storage.object.finalize --entry-point cloudFunction --region europe-west3 --memory 1GB 
 
 
+TODO:
+
+Add to each point made from arc/line a source attribute mentioning they were made from arc/line
+
+
 
 

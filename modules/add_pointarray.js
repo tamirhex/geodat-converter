@@ -201,6 +201,21 @@ function addArcPoints(drawing, polyline, dmax) {
 
 }
 
+function addLWPOLYLINEPoints(vertices, polyline){
+  let point;
+  for (let i in vertices){
+    point = {
+      'point': {
+          "xLng": vertices[i].x,
+          "yLat": vertices[i].y,
+          "zElv":  0,
+          "source": "LWPOLYLINE"
+      }
+  }
+  polyline.push(point);
+}
+}
+
 //**DxfJsonInitial and Pj stands for Polyline json */
 exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
     let layerObjArray = DxfJsonI.layerFromDxfSource;
@@ -211,11 +226,21 @@ exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
           let polyline = [];
           let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};// initialize, used to not put repeated points
           for (let i = 0; i < drawingsArray.length; i++) {
-              if (drawingsArray[i].code_00_drawingType == 'LINE') {
-                  lastPoint = addLinePoints(drawingsArray[i], polyline, lastPoint);
-              } else if (drawingsArray[i].code_00_drawingType == 'ARC') {
-                  addArcPointsAbs(drawingsArray[i], polyline, dmax);
-              }
+            switch (drawingsArray[i].code_00_drawingType){
+              case 'LINE':
+                lastPoint = addLinePoints(drawingsArray[i], polyline, lastPoint);
+                break;
+              case 'ARC':
+                addArcPointsAbs(drawingsArray[i], polyline, dmax);
+                break;
+              case 'LWPOLYLINE':
+                addLWPOLYLINEPoints(drawingsArray[i].code_vertices, polyline);
+                break;
+              case 'default':
+
+            }
+
+
           }
           DxfJsonI.layerFromDxfSource[i].polyline = polyline;
       }
