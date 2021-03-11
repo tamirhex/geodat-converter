@@ -22,6 +22,7 @@ exports.dxfToJson = async (url,layers) => {
         //* parsing the dxf recieving a parsed object  *//
         const helper = new Helper(dataString);
         const parsedObject = helper.parsed.entities;
+        devFileLog(parsedObject, "parsedObject");
         
         let requestedLayers = [];
         const requestedTypes = ["LINE", "ARC", "AcDbPolyline", "LWPOLYLINE"];
@@ -91,7 +92,8 @@ exports.dxfToJson = async (url,layers) => {
                   "code_31_endZelevation":result[i]?.end?.z ?? result[i]?.z,
                   "code_40_circleArcRadius":result[i]?.r,
                   "code_50_startArcAngle":result[i]?.startAngle,
-                  "code_51_endArcAngle":result[i]?.endAngle
+                  "code_51_endArcAngle":result[i]?.endAngle,
+                  "code_??_vertices":result[i]?.vertices
               }
               //** if in our layer object list there is already an object for that drawing's layer */
               //** then add the drawing to that object's array, otherwise add the missing object*/
