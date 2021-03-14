@@ -64,7 +64,7 @@ catch (error) {
 })
 
 app.get('/', (req, res) => {
-  res.send('Hello from App Engine deployed from cloud build push trigger!');
+  res.send('Hello, geo-converter-api is running!');
 });
 
 
@@ -114,6 +114,7 @@ function anotherfunction(json){
 // Listen to the App Engine-specified port, or 80 otherwise
 const PORT = process.env.PORT || 80;
 app.listen(PORT, () => {
+  console.log(`envrioment is ${process.env.NODE_ENV}`);
   console.log(`Server listening on port ${PORT}...`);
 });
   

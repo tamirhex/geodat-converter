@@ -9,6 +9,13 @@ gcloud functions deploy dxfToJson --entry-point cloudFunction --runtime nodejs14
 
 gcloud functions deploy test-cloudtrigger --runtime nodejs14 --trigger-resource dxf-files --trigger-event google.storage.object.finalize --entry-point cloudFunction --region europe-west3 --memory 1GB 
 
+gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+europe-west1-docker.pkg.dev/first-project-305113/converters-docker-repo/json-converter-api
+
+docker push europe-west1-docker.pkg.dev/first-project-305113/converters-docker-repo/json-converter-api
+
+
 
 TODO:
 

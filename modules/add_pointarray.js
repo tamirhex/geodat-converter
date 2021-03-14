@@ -218,6 +218,7 @@ function addLWPOLYLINEPoints(vertices, polyline){
 
 //**DxfJsonInitial and Pj stands for Polyline json */
 exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
+    res.send(`layerobjarray = ${layerObjArray}`);
     let layerObjArray = DxfJsonI.layerFromDxfSource;
     for (let i in layerObjArray){ 
       let drawingsArray = DxfJsonI.layerFromDxfSource[i].layerDrawings;
