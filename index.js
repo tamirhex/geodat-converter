@@ -30,11 +30,14 @@ app.post('/', async function (req, res) {
     } else if (!Array.isArray(sections)) {
       sections = [];
     }
-
-    
     if (!dmax) dmax = 0.4;
-    json = await dxfToJson(url,layers, sections);
-    add_pointarray(json, dmax, sections);
+
+    let {json, error} = await dxfToJson(url,layers, res);
+    if (error) return res.status(400).send(error);
+
+    errorObject = await add_pointarray(json, dmax, sections);
+    if (errorObject?.error) return res.status(400).send(errorObject.error);
+
     res.send(json);
     /*
     if (sections) {
@@ -51,7 +54,12 @@ app.post('/', async function (req, res) {
 
   //** If on dev env then create file for debugging using python script */
   if(process.env.NODE_ENV == "development"){
-    let data2 = JSON.stringify(json);
+    data2 = "";
+    if (data2) {
+      data2 = JSON.stringify(json);
+    } else {
+      data2 = "data empty because of some error";
+    }
     console.log("Datapolyline file created");
     fs.writeFile('./testlogs/datapolyline.json', data2);
   }
@@ -114,7 +122,7 @@ function anotherfunction(json){
 // Listen to the App Engine-specified port, or 80 otherwise
 const PORT = process.env.PORT || 80;
 app.listen(PORT, () => {
-  console.log(`envrioment is ${process.env.NODE_ENV}`);
+  console.log(`environment is ${process.env.NODE_ENV}`);
   console.log(`Server listening on port ${PORT}...`);
 });
   

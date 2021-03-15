@@ -34,10 +34,10 @@ function approxeq(num1, num2, okRatio) {
 }
 
 function getLinePoints(drawing, counter){
-    const x0 = drawing.code_10_startXeastLng;
-    const x1 = drawing.code_11_endXeastLng;
-    const y0 = drawing.code_20_startYnorthLat;
-    const y1 = drawing.code_21_endYnorthLat; 
+    const x0 = drawing?.code_10_startXeastLng;
+    const x1 = drawing?.code_11_endXeastLng;
+    const y0 = drawing?.code_20_startYnorthLat;
+    const y1 = drawing?.code_21_endYnorthLat; 
 
     const pointi = {
         'point': {
@@ -83,10 +83,10 @@ function getLinePoints(drawing, counter){
 
 
 function addLinePoints(drawing, polyline, lastPoint){
-    x0 = drawing.code_10_startXeastLng;
-    x1 = drawing.code_11_endXeastLng;
-    y0 = drawing.code_20_startYnorthLat;
-    y1 = drawing.code_21_endYnorthLat;
+    x0 = drawing?.code_10_startXeastLng;
+    x1 = drawing?.code_11_endXeastLng;
+    y0 = drawing?.code_20_startYnorthLat;
+    y1 = drawing?.code_21_endYnorthLat;
 
     point0 = {
         'point': {
@@ -127,11 +127,11 @@ function getMaxAngle(dmax, r) {
 
 }
 function addArcPointsAbs(drawing, polyline, dmax){
-    const x0 = drawing.code_10_startXeastLng;
-    const y0 = drawing.code_20_startYnorthLat;
-    const r = drawing.code_40_circleArcRadius;
-    const d0 = drawing.code_50_startArcAngle;
-    const d1 = drawing.code_51_endArcAngle;
+    const x0 = drawing?.code_10_startXeastLng;
+    const y0 = drawing?.code_20_startYnorthLat;
+    const r = drawing?.code_40_circleArcRadius;
+    const d0 = drawing?.code_50_startArcAngle;
+    const d1 = drawing?.code_51_endArcAngle;
     const angle_interval = getMaxAngle(dmax, r);
     const angleLimit = d1;
     let pointArray = [];
@@ -173,11 +173,11 @@ function addArcPointsAbs(drawing, polyline, dmax){
 
 function addArcPoints(drawing, polyline, dmax) {
     // For ARC type, there is only center x,y ; so startX is same as endX, so is for y.
-    const x0 = drawing.code_10_startXeastLng;
-    const y0 = drawing.code_20_startYnorthLat;
-    const r = drawing.code_40_circleArcRadius;
-    const d0 = drawing.code_50_startArcAngle;
-    const d1 = drawing.code_51_endArcAngle;
+    const x0 = drawing?.code_10_startXeastLng;
+    const y0 = drawing?.code_20_startYnorthLat;
+    const r = drawing?.code_40_circleArcRadius;
+    const d0 = drawing?.code_50_startArcAngle;
+    const d1 = drawing?.code_51_endArcAngle;
 
     pointArray = [];
     for (let i = 1; i <= 19; i++) {
@@ -218,16 +218,16 @@ function addLWPOLYLINEPoints(vertices, polyline){
 
 //**DxfJsonInitial and Pj stands for Polyline json */
 exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
-    res.send(`layerobjarray = ${layerObjArray}`);
-    let layerObjArray = DxfJsonI.layerFromDxfSource;
+  try {
+    let layerObjArray = DxfJsonI?.layerFromDxfSource;
     for (let i in layerObjArray){ 
-      let drawingsArray = DxfJsonI.layerFromDxfSource[i].layerDrawings;
+      let drawingsArray = DxfJsonI?.layerFromDxfSource[i]?.layerDrawings;
       //If not a sections array
-      if(!(sections.includes(layerObjArray[i].layerName))){
+      if(!(sections.includes(layerObjArray[i]?.layerName))){
           let polyline = [];
           let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};// initialize, used to not put repeated points
           for (let i = 0; i < drawingsArray.length; i++) {
-            switch (drawingsArray[i].code_00_drawingType){
+            switch (drawingsArray[i]?.code_00_drawingType){
               case 'LINE':
                 lastPoint = addLinePoints(drawingsArray[i], polyline, lastPoint);
                 break;
@@ -235,7 +235,7 @@ exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
                 addArcPointsAbs(drawingsArray[i], polyline, dmax);
                 break;
               case 'LWPOLYLINE':
-                addLWPOLYLINEPoints(drawingsArray[i].code_vertices, polyline);
+                addLWPOLYLINEPoints(drawingsArray[i]?.code_vertices, polyline);
                 break;
               case 'default':
 
@@ -249,7 +249,7 @@ exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
           let sectionCounter = 0;
           let sectionLineArray = [];
           for (let i = 0; i < drawingsArray.length; i++) {
-              if (drawingsArray[i].code_00_drawingType == 'LINE'){
+              if (drawingsArray[i]?.code_00_drawingType == 'LINE'){
                   sectionLine = getLinePoints(drawingsArray[i], sectionCounter);
                   sectionCounter++;
                   sectionLineArray.push(sectionLine);
@@ -265,7 +265,7 @@ exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
 
 
       
-      delete DxfJsonI.layerFromDxfSource[i].layerDrawings;
+      delete DxfJsonI?.layerFromDxfSource[i]?.layerDrawings;
   }
 
     /*
@@ -275,5 +275,7 @@ exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
     */
 
     return DxfJsonI;
-
+  } catch (error) {
+    return {error: error?.message}
+  }
 }

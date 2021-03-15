@@ -9,19 +9,27 @@ const {devFileLog, filterByInclude} = require('./helperfunctions');
 //url to download dxf:
 //https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3
 
-exports.dxfToJson = async (url,layers) => {
+exports.dxfToJson = async (url,layers, res) => {
     try{
         //logMessage will be sent in metadata to give more info to the user about the process.
         let logMessage = "";
         //*reads the dxf file preparing for parsing*//
         //dataString = await fs.readFile(url,"utf8"); (reads from local file)
-        const dxfContents =  await axios.get(url); // reads from file in url
+        let dxfContents = "";
+        try {
+          dxfContents =  await axios.get(url); // reads from file in url returns the response object
+        } catch (error) {
+          logMessage += `could not get file from URL, got error with status:${error.response.status}`
+          console.error("could not get file from URL, got error with status : " + error.response.status);
+          return {json:"", error:logMessage};
+          
+        }
         const dataString = dxfContents?.data;
-        const fileNameAlmost = dxfContents?.headers["content-disposition"]
+        const fileNameAlmost = dxfContents?.headers?.["content-disposition"]
 
         //* parsing the dxf recieving a parsed object  *//
         const helper = new Helper(dataString);
-        const parsedObject = helper.parsed.entities;
+        const parsedObject = helper?.parsed?.entities;
         devFileLog(parsedObject, "parsedObject");
         
         let requestedLayers = [];
@@ -117,7 +125,7 @@ exports.dxfToJson = async (url,layers) => {
                 "Error reading drawings, make sure post request is in JSON format and that the url is correct";
         }
         devFileLog(filteredObj, "filteredObj");
-        return filteredObj;
+        return {json:filteredObj, error:""};
         //* Writes the object as a nice string and writes to file *//
         //let data = util.inspect(filteredObj, false, null);
         //fs.writeFile("./job description/dxf_example_myConvert.txt",data);
