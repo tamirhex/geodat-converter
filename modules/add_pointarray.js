@@ -92,14 +92,16 @@ function addLinePoints(drawing, polyline, lastPoint){
         'point': {
             "xLng": x0,
             "yLat": y0,
-            "zElv":  0
+            "zElv":  0,
+            "source": 'LINE'
         }
     }
     point1 = {
         'point': {
             "xLng": x1,
             "yLat": y1,
-            "zElv":  0
+            "zElv":  0,
+            "source": 'LINE'
         }
     }
 
@@ -157,7 +159,7 @@ function addArcPointsAbs(drawing, polyline, dmax){
                 "xLng": x0 + dx,
                 "yLat": y0 + dy,
                 "zElv":  0,
-                //"fromArc": counter
+                "source": 'arc'
             }
         }
         //counter++; //debugging

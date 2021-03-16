@@ -40,27 +40,32 @@ app.post('/', async function (req, res) {
 
     res.send(json);
     /*
-    if (sections) {
-      
-      let data1 = JSON.stringify(json);
-      console.log("Datasections file created");
-      fs.writeFile('./testlogs/datasections.json', data1);
-  }
-  else {
-      let data2 = JSON.stringify(json);
-      console.log("Datapolyline file created");
-      fs.writeFile('./testlogs/datapolyline.json', data2);
-  }*/
+    //development logging, using the one below instead.
+    if (process.env.NODE_ENV == 'development') {
+      if (sections) {
+        
+        let data1 = JSON.stringify(json);
+        console.log("Datasections file created");
+        fs.writeFile('./testlogs/datasections.json', data1);
+      } else {
+        let data2 = JSON.stringify(json);
+        console.log("Datapolyline file created");
+        fs.writeFile('./testlogs/datapolyline.json', data2);
+      }
+    }
+    */
 
   //** If on dev env then create file for debugging using python script */
   if(process.env.NODE_ENV == "development"){
-    data2 = "";
-    if (data2) {
+    let data2 = "";
+    try {
       data2 = JSON.stringify(json);
-    } else {
-      data2 = "data empty because of some error";
+      console.log("datapolyline.json successfully created");
+    } catch (e) {
+      console.log("could not json.stringify data from json response");
+      data2 = "could not json.stringify data from json response";
     }
-    console.log("Datapolyline file created");
+    
     fs.writeFile('./testlogs/datapolyline.json', data2);
   }
 
