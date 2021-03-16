@@ -205,25 +205,59 @@ function addArcPoints(drawing, polyline, dmax) {
 //anchorPoint is last point that was drawn
 function addLWPOLYLINEPoints(vertices, polyline, anchorPoint){
   let point;
-  for (let i in vertices){
-    point = {
-      'point': {
-          "xLng": vertices[i].x,
-          "yLat": vertices[i].y,
-          "zElv":  0,
-          "source": "LWPOLYLINE"
+  let lastPoint;
+  //console.log(anchorPoint);
+  const d2first = pointsDistance(anchorPoint, firstVerticesPoint(vertices));
+  const d2last = pointsDistance(anchorPoint, lastVerticesPoint(vertices));
+  //if distance from anchor point to first point in vertice is bigger, add vertice reversed
+  if (d2first > d2last) {
+    lastIndex = vertices.length - 1;
+    for (let i = lastIndex; i >= 0; i--){
+      point = {
+        'point': {
+            "xLng": vertices[i].x,
+            "yLat": vertices[i].y,
+            "zElv":  0,
+            "source": "LWPOLYLINE"
+        }
       }
-  }
+      polyline.push(point);
+      lastPoint = point;
+    }
+  } else {
+    for (let i in vertices){
+      point = {
+        'point': {
+            "xLng": vertices[i].x,
+            "yLat": vertices[i].y,
+            "zElv":  0,
+            "source": "LWPOLYLINE"
+        }
+    }
   polyline.push(point);
-  return point;
+  lastPoint = point;
   }
+  }
+  return lastPoint;
 }
 
-function firstVerticesPoint(vertice){
+function firstVerticesPoint(vertices){
   let point = {
     'point': {
-        "xLng": vertice[0].x,
-        "yLat": vertice[0].y,
+        "xLng": vertices[0].x,
+        "yLat": vertices[0].y,
+        "zElv":  0,
+        "source": "LWPOLYLINE"
+    }
+  }
+  return point;
+}
+function lastVerticesPoint(vertices){
+  const lastIndex = vertices.length - 1;
+  let point = {
+    'point': {
+        "xLng": vertices[lastIndex].x,
+        "yLat": vertices[lastIndex].y,
         "zElv":  0,
         "source": "LWPOLYLINE"
     }
