@@ -20,3 +20,28 @@ exports.filterByInclude = (object, layerArray, typeArray) => {
             typeArray.includes(key?.type));
 }
 
+exports.pointsEqual = (p1, p2) => {
+  if (p1.point.xLng === p2.point.xLng
+    && p1.point.yLat === p2.point.yLat
+    && p1.point.zElv === p2.point.zElv) {
+      return true;
+  }
+  return false;
+}
+
+exports.pointsDistance = (p1, p2) => {
+  const x1 = p1.point.xLng;
+  const y1 = p1.point.yLat;
+  const z1 = p1.point.zElv ?? 0;
+
+  const x2 = p2.point.xLng;
+  const y2 = p2.point.yLat;
+  const z2 = p2.point.zElv ?? 0;
+
+  distance = (Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2)));
+  if(!distance && distance != 0)
+    console.log(`distance is ${distance} x1 is ${x1} x2 is ${x2} y1 is ${y1} y2 is ${y2} z1 is ${z1} z2 is ${z2}`);
+  //else
+    //console.log("fine distance is " + distance);
+  return distance;
+}

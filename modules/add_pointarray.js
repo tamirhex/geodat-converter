@@ -8,6 +8,7 @@
 const Oldfs = require('fs');
 const fs = Oldfs.promises;
 const util = require('util');
+const { pointsDistance } = require('./helperfunctions.js')
 
 
 /**
@@ -108,7 +109,6 @@ function addLinePoints(drawing, polyline, lastPoint){
         }
     }
 
-
     if (lastPoint.point.xLng == 0) {// initialize first point in polyline 
         polyline.push(point0,point1)
     }
@@ -129,7 +129,6 @@ function getMaxAngle(dmax, r) {
     let ehalf = Math.asin(dhalf / r);
 
     return (ehalf * 2);
-
 }
 function addArcPointsAbs(drawing, polyline, dmax){
     const x0 = drawing?.code_10_startXeastLng;
@@ -149,7 +148,6 @@ function addArcPointsAbs(drawing, polyline, dmax){
     }
     angleArray.push(d1);
     //console.log(angleArray);  
-
     // Now I have a list of angles to create points from them to resemble an arc
     //let counter = 0; //debugging
     let angle1 = d0;
@@ -169,11 +167,8 @@ function addArcPointsAbs(drawing, polyline, dmax){
         pointArray.push(point);
     }
     
-
     polyline.push(...pointArray);
-    
-
-
+    return pointArray[pointArray.length - 1];
 }
 
 function addArcPoints(drawing, polyline, dmax) {
@@ -202,11 +197,13 @@ function addArcPoints(drawing, polyline, dmax) {
         pointArray.push(point);
     }
     polyline.push(...pointArray);
+    return pointArray[pointArray.length - 1];
     
 
 }
 
-function addLWPOLYLINEPoints(vertices, polyline){
+//anchorPoint is last point that was drawn
+function addLWPOLYLINEPoints(vertices, polyline, anchorPoint){
   let point;
   for (let i in vertices){
     point = {
@@ -218,9 +215,21 @@ function addLWPOLYLINEPoints(vertices, polyline){
       }
   }
   polyline.push(point);
-}
+  return point;
+  }
 }
 
+function firstVerticesPoint(vertice){
+  let point = {
+    'point': {
+        "xLng": vertice[0].x,
+        "yLat": vertice[0].y,
+        "zElv":  0,
+        "source": "LWPOLYLINE"
+    }
+  }
+  return point;
+}
 //**DxfJsonInitial and Pj stands for Polyline json */
 exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
   try {
@@ -231,16 +240,19 @@ exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
       if(!(sections.includes(layerObjArray[i]?.layerName))){
           let polyline = [];
           let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};// initialize, used to not put repeated points
+          if (drawingsArray[i]?.code_00_drawingType == 'LWPOLYLINE'){
+            lastPoint = firstVerticesPoint(drawingsArray[i]?.code_vertices);
+          }
           for (let i = 0; i < drawingsArray.length; i++) {
             switch (drawingsArray[i]?.code_00_drawingType){
               case 'LINE':
                 lastPoint = addLinePoints(drawingsArray[i], polyline, lastPoint);
                 break;
               case 'ARC':
-                addArcPointsAbs(drawingsArray[i], polyline, dmax);
+                lastPoint = addArcPointsAbs(drawingsArray[i], polyline, dmax);
                 break;
               case 'LWPOLYLINE':
-                addLWPOLYLINEPoints(drawingsArray[i]?.code_vertices, polyline);
+                lastPoint = addLWPOLYLINEPoints(drawingsArray[i]?.code_vertices, polyline, lastPoint);
                 break;
               case 'default':
 
