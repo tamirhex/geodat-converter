@@ -43,7 +43,8 @@ function getLinePoints(drawing, counter){
         'point': {
             "xLng": x0,
             "yLat": y0,
-            "zElv":  0
+            "zElv":  0,
+            "source": "LINE(SECTIONS)"
         }
     }
 
@@ -51,7 +52,8 @@ function getLinePoints(drawing, counter){
         'point': {
             "xLng": (x1 - x0) / 2 + x0,
             "yLat": (y1 - y0) / 2 + y0,
-            "zElv":  0
+            "zElv":  0,
+            "source": "LINE(SECTIONS)"
         }
     }
 
@@ -59,7 +61,8 @@ function getLinePoints(drawing, counter){
         'point': {
             "xLng": x1,
             "yLat": y1,
-            "zElv":  0
+            "zElv":  0,
+            "source": "LINE(SECTIONS)"
         }
     }
 

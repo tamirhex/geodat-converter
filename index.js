@@ -54,9 +54,9 @@ app.post('/', async function (req, res) {
       }
     }
     */
-
   //** If on dev env then create file for debugging using python script */
-  if(process.env.NODE_ENV == "development"){
+  
+  if(process.env.NODE_ENV == "development" || process.env.NODE_ENV == "dev" ){
     let data2 = "";
     try {
       data2 = JSON.stringify(json);

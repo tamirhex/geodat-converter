@@ -8,7 +8,7 @@ const fs = Oldfs.promises;
  * @param {string} fileName 
  */
 exports.devFileLog = async (json, fileName) => {
-  if (process.env.NODE_ENV == "development") {
+  if (process.env.NODE_ENV == "development" || process.env.NODE_ENV == "dev") {
     let data = util.inspect(json,{maxArrayLength: null, depth:null});
     fs.writeFile(`./testlogs/${fileName}`, data);
   }
