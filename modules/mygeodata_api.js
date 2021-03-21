@@ -29,9 +29,13 @@ exports.useMyGeoAPI = async (req,res) => {
       srcurl: url,
       outform: outform,
       key: apikey,
-      format: outformat,
-      incrs: incords,
-      outcrs: outcords
+      format: outformat
+    }
+    
+    //if there are outcords it means user wishes to convert cordinates
+    if (outcords) {
+      requestObj.outcrs = outcords;
+      requestObj.incrs = incords;
     }
     if (layers_mygeodata) {
       requestObj.layers = layers_mygeodata;

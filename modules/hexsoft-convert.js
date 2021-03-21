@@ -1,10 +1,12 @@
 const { dxfToJson } = require("./dxfToJson");
 const { add_pointarray } = require("./add_pointarray");
 const { getLayers } = require("./getLayers")
+const { devFileLog } = require('./helperfunctions');
 const express = require('express');
 const app = express();
 const Oldfs = require('fs');
 const util = require('util');
+const { default: axios } = require("axios");
 const fs = Oldfs.promises;
 
 exports.hexsoft_convert = async (req,res) => {
@@ -24,7 +26,7 @@ exports.hexsoft_convert = async (req,res) => {
     "https://us-central1-first-project-305113.cloudfunctions.net/hello_http";
     let outform = "url";
     if (req.body?.output_method == 'binary'){
-    outform = req.body?.output_method;
+      outform = req.body?.output_method;
     }
 
     //** lets sections property in request to be either a string or an array of strings */
@@ -42,9 +44,31 @@ exports.hexsoft_convert = async (req,res) => {
       var {json, error} = await getLayers(url);
       if (error) return res.status(400).send(error);
     } else { // MAIN LOGIC
-      if (informat != 'dxf') {
+      if (informat != 'dxf' || outcords) {
+        //prepares requets object to post
+        requestObj = {
+          srcurl: url,
+          outform: outform,
+          key: apikey,
+          format: 'dxf'
+        }
+        //if there are outcords it means user wishes to convert cordinates
+        if (outcords) {
+          requestObj.outcrs = outcords;
+          requestObj.incrs = incords;
+        }
+        const options = {
+          method: 'post',
+          url: cloudfunction_url,
+          data: requestObj,
+        };
         
+        // send the request
+        const axiosResponse = await axios(options);
+        devFileLog(axiosResponse, "axiosResponse");
+        if (axiosResponse.status == 200) url = axiosResponse.data;
       }
+
       var {json, error} = await dxfToJson(url,layers, res);
       if (error) return res.status(400).send(error);
       errorObject = await add_pointarray(json, dmax, sections);

@@ -18,6 +18,7 @@ exports.dxfToJson = async (url,layers, res) => {
         let dxfContents = "";
         try {
           dxfContents =  await axios.get(url); // reads from file in url returns the response object
+          devFileLog(dxfContents, "fresh-dxfcontent-fromURL");
         } catch (error) {
           logMessage += `could not get file from URL, got error with status:${error.response.status}`
           console.error("could not get file from URL, got error with status : " + error.response.status);
