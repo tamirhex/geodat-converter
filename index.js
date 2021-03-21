@@ -1,6 +1,8 @@
 const { dxfToJson } = require("./modules/dxfToJson");
 const { add_pointarray } = require("./modules/add_pointarray");
-const { getLayers } = require("./modules/getLayers")
+const { getLayers } = require("./modules/getLayers");
+const { hexsoft_convert } = require("./modules/hexsoft-convert");
+const { useMyGeoAPI } = require("./modules/mygeodata_api");
 const express = require('express');
 const app = express();
 const Oldfs = require('fs');
@@ -19,7 +21,6 @@ app.post('/', async function (req, res) {
 
 
 app.post('/', checkSchema(postSchema), async function (req, res) {
-  try {
   // Validate incoming input
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -27,73 +28,22 @@ app.post('/', checkSchema(postSchema), async function (req, res) {
           errors: errors.array()
       });
     }
-
-
     //question marks notation for a bit of case insensivity, takes the non-null value
     let layers = req.body.layers ?? req.body.Layers ?? req.body.layer ?? req.body.Layer ?? req.body.layerName;
     let url = req.body.url ?? req.body.URL ?? req.body.Url;
     let dmax = req.body?.dmax;
     let sections = req.body?.sections ?? req.body?.section;
     let getLayerList = req.body?.getlayers ?? req.body?.getLayers;
-    
-    //** lets sections property in request to be either a string or an array of strings */
-    if(!sections){
-      sections = [];
-    } else if (typeof sections == 'string') {
-      sections = [sections];
-    } else if (!Array.isArray(sections)) {
-      sections = [];
+    let informat = req.body?.informat;
+    let outformat = req.body?.outformat;
+    if (outformat !== "hexsoft_json"){
+      //straight up use mygeodata api
+      useMyGeoAPI(req,res);
+    } else {
+      hexsoft_convert(req,res);
     }
-    if (!dmax) dmax = 0.4;
-
-    // SIDE LOGIC IF ONLY WANT LAYER NAMES AND NOT WHOLE CONVERSION
-    if (getLayerList === true || getLayerList === 'true') { 
-      var {json, error} = await getLayers(url);
-      if (error) return res.status(400).send(error);
-    } else { // MAIN LOGIC
-      var {json, error} = await dxfToJson(url,layers, res);
-      if (error) return res.status(400).send(error);
-      errorObject = await add_pointarray(json, dmax, sections);
-      if (errorObject?.error) return res.status(400).send(errorObject.error);
-    }
-
-    res.send(json);
-
-    /*
-    //development logging, using the one below instead.
-    if (process.env.NODE_ENV == 'development') {
-      if (sections) {
-        
-        let data1 = JSON.stringify(json);
-        console.log("Datasections file created");
-        fs.writeFile('./testlogs/datasections.json', data1);
-      } else {
-        let data2 = JSON.stringify(json);
-        console.log("Datapolyline file created");
-        fs.writeFile('./testlogs/datapolyline.json', data2);
-      }
-    }
-    */
-  //** If on dev env then create file for debugging using python script */
   
-  if(process.env.NODE_ENV == "development" || process.env.NODE_ENV == "dev" ){
-    let data2 = "";
-    try {
-      data2 = JSON.stringify(json);
-      console.log("datapolyline.json successfully created");
-    } catch (e) {
-      console.log("could not json.stringify data from json response");
-      data2 = "could not json.stringify data from json response";
-    }
-    
-    fs.writeFile('./testlogs/datapolyline.json', data2);
-  }
 
-}
-catch (error) {
-    res.send("Error occured, red.body.url is " + req.body.url +
-    ", req.body.layers is " + req.body.layers + "\n error is " + error);
-}
 })
 
 app.get('/', (req, res) => {
