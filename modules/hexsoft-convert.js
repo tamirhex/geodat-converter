@@ -2,6 +2,7 @@ const { dxfToJson } = require("./dxfToJson");
 const { add_pointarray } = require("./add_pointarray");
 const { getLayers } = require("./getLayers")
 const { devFileLog } = require('./helperfunctions');
+const { stringIsAValidUrl } = require("../modules/helperfunctions");
 const express = require('express');
 const app = express();
 const Oldfs = require('fs');
@@ -63,10 +64,15 @@ exports.hexsoft_convert = async (req,res) => {
           data: requestObj,
         };
         
-        // send the request
+        // send the request;
         const axiosResponse = await axios(options);
         devFileLog(axiosResponse, "axiosResponse");
-        if (axiosResponse.status == 200) url = axiosResponse.data;
+        //checks if we actually got a good url from axios
+        if (axiosResponse?.status == 200 && stringIsAValidUrl(axiosResponse?.data)) {
+          url = axiosResponse?.data;
+        }
+        else return res.status(axiosResponse.status)
+          .send("SOME ERROR OCCURED WITH MYGEODATA API(html form usually means invalid input url), ITS RESPONSE IS: " + axiosResponse.data);
       }
 
       var {json, error} = await dxfToJson(url,layers, res);

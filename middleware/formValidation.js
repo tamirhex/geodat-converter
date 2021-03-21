@@ -25,7 +25,6 @@ exports.postSchema = {
             console.log("informat is invalid");
             return Promise.reject(`informat is invalid, isn't one of the following formats: ${allowedFormats}`);
           } 
-          else console.log ("informat is valid");
         }
     },
 

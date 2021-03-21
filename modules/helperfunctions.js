@@ -1,6 +1,16 @@
 const Oldfs = require('fs');
 const util = require('util');
 const fs = Oldfs.promises;
+const URL = require("url").URL;
+
+exports.stringIsAValidUrl = (s) => {
+  try {
+    new URL(s);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
 
 /**
  * If we are in development environment write a log file of the json object given.
