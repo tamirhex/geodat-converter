@@ -6,6 +6,8 @@ const app = express();
 const Oldfs = require('fs');
 const util = require('util');
 const fs = Oldfs.promises;
+const {checkSchema, validationResult} = require('express-validator');
+const { postSchema } = require('./middleware/formValidation');
 
 app.use(express.json());
 
@@ -16,14 +18,24 @@ app.post('/', async function (req, res) {
 })*/
 
 
-app.post('/', async function (req, res) {
+app.post('/', checkSchema(postSchema), async function (req, res) {
   try {
+  // Validate incoming input
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+      return res.status(400).json({
+          errors: errors.array()
+      });
+    }
+
+
     //question marks notation for a bit of case insensivity, takes the non-null value
     let layers = req.body.layers ?? req.body.Layers ?? req.body.layer ?? req.body.Layer ?? req.body.layerName;
     let url = req.body.url ?? req.body.URL ?? req.body.Url;
     let dmax = req.body?.dmax;
     let sections = req.body?.sections ?? req.body?.section;
     let getLayerList = req.body?.getlayers ?? req.body?.getLayers;
+    
     //** lets sections property in request to be either a string or an array of strings */
     if(!sections){
       sections = [];
