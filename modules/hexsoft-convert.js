@@ -12,6 +12,8 @@ const fs = Oldfs.promises;
 
 exports.hexsoft_convert = async (req,res) => {
   try{
+    let infoLog = ""
+
     let layers = req.body.layers ?? req.body.Layers ?? req.body.layer ?? req.body.Layer ?? req.body.layerName;
     let url = req.body.url ?? req.body.URL ?? req.body.Url;
     let dmax = req.body?.dmax;
@@ -46,6 +48,7 @@ exports.hexsoft_convert = async (req,res) => {
       if (error) return res.status(400).send(error);
     } else { // MAIN LOGIC
       if (informat != 'dxf' || outcords) {
+        infoLog += ", Will use mygeodata API because 'informat' != dxf || outcords exists. "
         //prepares requets object to post
         requestObj = {
           srcurl: url,
@@ -73,9 +76,9 @@ exports.hexsoft_convert = async (req,res) => {
         }
         else return res.status(axiosResponse.status)
           .send("SOME ERROR OCCURED WITH MYGEODATA API(html form usually means invalid input url), ITS RESPONSE IS: " + axiosResponse.data);
-      }
+      } else { infoLog += ", Did not use mygeodata API, " }
 
-      var {json, error} = await dxfToJson(url,layers, res);
+      var {json, error} = await dxfToJson(url,layers, infoLog);
       if (error) return res.status(400).send(error);
       errorObject = await add_pointarray(json, dmax, sections);
       if (errorObject?.error) return res.status(400).send(errorObject.error);

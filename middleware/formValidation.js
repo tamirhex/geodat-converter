@@ -1,4 +1,6 @@
 const {body, validationResult} = require('express-validator');
+const { stringIsAValidUrl } = require("../modules/helperfunctions");
+
 exports.postSchema = {
   /*
     url: {
@@ -14,7 +16,14 @@ exports.postSchema = {
     },*/
     url: {
         notEmpty: true,
-        errorMessage: "Must be a non-empty url"
+        errorMessage:"url is empty",
+        custom: {
+          options: async value => {
+            if (stringIsAValidUrl(value)){
+              return Promise.reject(`url is invalid`);
+            } 
+          }
+        }
     },
     informat: {
       custom: {
@@ -26,10 +35,32 @@ exports.postSchema = {
             return Promise.reject(`informat is invalid, isn't one of the following formats: ${allowedFormats}`);
           } 
         }
+      },
+    },
+
+    outformat: {
+      custom: {
+        options: async value => {
+          let allowedFormats = ["shp", 'kml', 'kmz', "geojson", 'gml', 'gpx', 
+          'mapinfo', 'dgn', 'dxf', 'gpkg', 'sqlite', 'csv', 'ods', 'xlsx', 'hexsoft_json']
+          if (!allowedFormats.includes(value)){
+            return Promise.reject(`outformat is invalid, isn't one of the following formats: ${allowedFormats}`);
+          } 
+        }
+      },
+    },
+
+    apikey: {
+      custom: {
+        options: async value => {
+          if (body('informat') != 'dxf'|| body('outcords')){
+            if(!value)
+            return Promise.reject(`What you're trying to do needs an API key`);
+          } 
+        }
+      },
     },
 
 
-
-    },
     
 }

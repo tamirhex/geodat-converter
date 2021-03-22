@@ -9,10 +9,9 @@ const {devFileLog, filterByInclude} = require('./helperfunctions');
 //url to download dxf:
 //https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3
 
-exports.dxfToJson = async (url,layers, res) => {
+exports.dxfToJson = async (url,layers, logMessage) => {
     try{
         //logMessage will be sent in metadata to give more info to the user about the process.
-        let logMessage = "";
         //*reads the dxf file preparing for parsing*//
         //dataString = await fs.readFile(url,"utf8"); (reads from local file)
         let dxfContents = "";
@@ -26,6 +25,7 @@ exports.dxfToJson = async (url,layers, res) => {
           
         }
         const dataString = dxfContents?.data;
+        devFileLog(dataString, "dxfContents.data");
         const fileNameAlmost = dxfContents?.headers?.["content-disposition"]
 
         //* parsing the dxf recieving a parsed object  *//
@@ -34,7 +34,7 @@ exports.dxfToJson = async (url,layers, res) => {
         devFileLog(parsedObject, "parsedObject");
         
         let requestedLayers = [];
-        const requestedTypes = ["LINE", "ARC", "AcDbPolyline", "LWPOLYLINE"];
+        const requestedTypes = ["LINE", "ARC", "AcDbPolyline", "LWPOLYLINE", "POLYLINE"];
         let result;
         //*layers can come either as a single string, as an array of strings, or empty*//
         switch(true){
@@ -77,7 +77,7 @@ exports.dxfToJson = async (url,layers, res) => {
                 "docSourceDxfUrl" : url,
                 "layersExtracted" : [],
                 "infoLog" : logMessage,
-                "versionNotes": "Currently it only shows entities of type [LINE, ARC, AcDbPolyline, LWPOLYLINE]"
+                "versionNotes": "Currently it only shows entities of type [LINE, ARC, AcDbPolyline, LWPOLYLINE, POLYLINE]"
             },
             "layerFromDxfSource": []
             /*

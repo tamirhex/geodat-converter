@@ -21,6 +21,7 @@ exports.devFileLog = async (json, fileName) => {
   if (process.env.NODE_ENV == "development" || process.env.NODE_ENV == "dev") {
     let data = util.inspect(json,{maxArrayLength: null, depth:null});
     fs.writeFile(`./testlogs/${fileName}`, data);
+    console.log("Wrote file : " + fileName);
   }
 
 }
@@ -42,11 +43,11 @@ exports.pointsEqual = (p1, p2) => {
 exports.pointsDistance = (p1, p2) => {
   const x1 = p1.point.xLng;
   const y1 = p1.point.yLat;
-  const z1 = p1.point.zElv ?? 0;
+  const z1 = p1.point?.zElv ?? 0;
 
   const x2 = p2.point.xLng;
   const y2 = p2.point.yLat;
-  const z2 = p2.point.zElv ?? 0;
+  const z2 = p2.point?.zElv ?? 0;
 
   distance = (Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2)));
   if(!distance && distance != 0)

@@ -217,8 +217,8 @@ function addLWPOLYLINEPoints(vertices, polyline, anchorPoint){
         'point': {
             "xLng": vertices[i].x,
             "yLat": vertices[i].y,
-            "zElv":  0,
-            "source": "LWPOLYLINE"
+            "zElv": vertices[i]?.z ?? 0,
+            "source": "LWPOLYLINE/POLYLINE"
         }
       }
       polyline.push(point);
@@ -230,8 +230,8 @@ function addLWPOLYLINEPoints(vertices, polyline, anchorPoint){
         'point': {
             "xLng": vertices[i].x,
             "yLat": vertices[i].y,
-            "zElv":  0,
-            "source": "LWPOLYLINE"
+            "zElv": vertices[i]?.z ?? 0,
+            "source": "LWPOLYLINE/POLYLINE"
         }
     }
   polyline.push(point);
@@ -246,8 +246,8 @@ function firstVerticesPoint(vertices){
     'point': {
         "xLng": vertices[0].x,
         "yLat": vertices[0].y,
-        "zElv":  0,
-        "source": "LWPOLYLINE"
+        "zElv":  vertices[0]?.z ?? 0,
+        "source": "LWPOLYLINE/POLYLINE"
     }
   }
   return point;
@@ -258,8 +258,8 @@ function lastVerticesPoint(vertices){
     'point': {
         "xLng": vertices[lastIndex].x,
         "yLat": vertices[lastIndex].y,
-        "zElv":  0,
-        "source": "LWPOLYLINE"
+        "zElv": vertices[lastIndex]?.z ?? 0,
+        "source": "LWPOLYLINE/POLYLINE"
     }
   }
   return point;
@@ -274,7 +274,8 @@ exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
       if(!(sections.includes(layerObjArray[i]?.layerName))){
           let polyline = [];
           let lastPoint = {'point' : {"xLng": 0,"yLat": 0,"zElv":  0}};// initialize, used to not put repeated points
-          if (drawingsArray[i]?.code_00_drawingType == 'LWPOLYLINE'){
+          if (drawingsArray[i]?.code_00_drawingType == 'LWPOLYLINE'
+            || drawingsArray[i]?.code_00_drawingType == 'POLYLINE') {
             lastPoint = firstVerticesPoint(drawingsArray[i]?.code_vertices);
           }
           for (let i = 0; i < drawingsArray.length; i++) {
@@ -286,9 +287,12 @@ exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
                 lastPoint = addArcPointsAbs(drawingsArray[i], polyline, dmax);
                 break;
               case 'LWPOLYLINE':
+              case 'POLYLINE':
                 lastPoint = addLWPOLYLINEPoints(drawingsArray[i]?.code_vertices, polyline, lastPoint);
                 break;
-              case 'default':
+              default:
+                console.log("resulted in default on switch case with drawing type of "
+                 + drawingsArray[i]?.code_00_drawingType);
 
             }
 
