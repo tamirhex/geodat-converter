@@ -20,13 +20,13 @@ exports.hexsoft_convert = async (req,res) => {
     const informat = req.body?.informat;
 
     //**geodata api related options(will be used only if informat isn't dxf):*/
-    const apikey = req.body?.apikey;
+    const apikey = process.env.APIKEY;
     const incords = req.body?.incords;
     const outcords = req.body?.outcords;
-    let cloudfunction_url = req.body?.cloudfunction_url ?? 
+    let cloudfunction_url = process.env.APICLOUDFUNCTION ?? 
     "https://us-central1-first-project-305113.cloudfunctions.net/hello_http";
     let outform = "url";
-    if (req.body?.output_method == 'binary'){
+    if (req.body?.output_method == 'binary' && process.env.NODE_ENV == 'development'){
       outform = req.body?.output_method;
     }
 

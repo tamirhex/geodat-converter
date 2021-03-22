@@ -12,7 +12,8 @@ const {checkSchema, validationResult} = require('express-validator');
 const { postSchema } = require('./middleware/formValidation');
 
 app.use(express.json());
-
+console.log(process.env.APIKEY);
+console.log(process.env.APICLOUDFUNCTION);
 /*
 app.post('/', async function (req, res) {
   res.send(req.body.url);

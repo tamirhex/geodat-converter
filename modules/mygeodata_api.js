@@ -14,14 +14,14 @@ exports.useMyGeoAPI = async (req,res) => {
   try{
     const url = req.body.url ?? req.body.URL ?? req.body.Url;
     const outformat = req.body?.outformat;
-    const apikey = req.body?.apikey;
+    const apikey = process.env.APIKEY;
     const incords = req.body?.incords;
     const outcords = req.body?.outcords;
     const layers_mygeodata = req.body?.layers_mygeodata;
-    let cloudfunction_url = req.body?.cloudfunction_url ?? 
+    let cloudfunction_url = process.env.APICLOUDFUNCTION ?? 
         "https://us-central1-first-project-305113.cloudfunctions.net/hello_http";
     let outform = "url";
-    if (req.body?.output_method == 'binary'){
+    if (req.body?.output_method == 'binary' && process.env.NODE_ENV == 'development'){
      outform = req.body?.output_method;
     }
 
