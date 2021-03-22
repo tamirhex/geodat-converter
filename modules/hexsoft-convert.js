@@ -1,6 +1,5 @@
 const { dxfToJson } = require("./dxfToJson");
 const { add_pointarray } = require("./add_pointarray");
-const { getLayers } = require("./getLayers")
 const { devFileLog } = require('./helperfunctions');
 const { stringIsAValidUrl } = require("../modules/helperfunctions");
 const express = require('express');
@@ -18,7 +17,6 @@ exports.hexsoft_convert = async (req,res) => {
     let url = req.body.url ?? req.body.URL ?? req.body.Url;
     let dmax = req.body?.dmax;
     let sections = req.body?.sections ?? req.body?.section;
-    let getLayerList = req.body?.getlayers ?? req.body?.getLayers;
     const informat = req.body?.informat;
 
     //**geodata api related options(will be used only if informat isn't dxf):*/
@@ -42,50 +40,46 @@ exports.hexsoft_convert = async (req,res) => {
     }
     if (!dmax) dmax = 0.4;
 
-    // SIDE LOGIC IF ONLY WANT LAYER NAMES AND NOT WHOLE CONVERSION
-    if (getLayerList === true || getLayerList === 'true' && informat == 'dxf') { 
-      var {json, error} = await getLayers(url);
-      if (error) return res.status(400).send(error);
-    } else { // MAIN LOGIC
-      if (informat != 'dxf' || outcords) {
-        if (!apikey) return res.status(400).send("What you're trying to do requires an api key");
-        infoLog += ", Will use mygeodata API because 'informat' != dxf || outcords exists. "
-        //prepares requets object to post
-        requestObj = {
-          srcurl: url,
-          outform: outform,
-          key: apikey,
-          format: 'dxf'
-        }
-        //if there are outcords it means user wishes to convert cordinates
-        if (outcords) {
-          requestObj.outcrs = outcords;
-          requestObj.incrs = incords;
-        }
-        const options = {
-          method: 'post',
-          url: cloudfunction_url,
-          data: requestObj,
-        };
-        
-        // send the request;
-        const axiosResponse = await axios(options);
-        devFileLog(axiosResponse, "axiosResponse");
-        //checks if we actually got a good url from axios
-        if (axiosResponse?.status == 200 && stringIsAValidUrl(axiosResponse?.data)) {
-          url = axiosResponse?.data;
-        }
-        else return res.status(axiosResponse.status)
-          .send("SOME ERROR OCCURED WITH MYGEODATA API(html form usually means invalid input url), ITS RESPONSE IS: " + axiosResponse.data);
-      } else { infoLog += ", Did not use mygeodata API, " }
 
-      var {json, error} = await dxfToJson(url,layers, infoLog);
-      if (error) return res.status(400).send(error);
-      errorObject = await add_pointarray(json, dmax, sections);
-      if (errorObject?.error) return res.status(400).send(errorObject.error);
-    }
+    if (informat != 'dxf' || outcords) {
+      if (!apikey) return res.status(400).send("What you're trying to do requires an api key");
+      infoLog += ", Will use mygeodata API because 'informat' != dxf || outcords exists. "
+      //prepares requets object to post
+      requestObj = {
+        srcurl: url,
+        outform: outform,
+        key: apikey,
+        format: 'dxf'
+      }
+      //if there are outcords it means user wishes to convert cordinates
+      if (outcords) {
+        requestObj.outcrs = outcords;
+        requestObj.incrs = incords;
+      }
+      const options = {
+        method: 'post',
+        url: cloudfunction_url,
+        data: requestObj,
+      };
+      
+      // send the request;
+      const axiosResponse = await axios(options);
+      devFileLog(axiosResponse, "axiosResponse");
+      //checks if we actually got a good url from axios
+      if (axiosResponse?.status == 200 && stringIsAValidUrl(axiosResponse?.data)) {
+        url = axiosResponse?.data;
+      }
+      else return res.status(axiosResponse.status)
+        .send("SOME ERROR OCCURED WITH MYGEODATA API(html form usually means invalid input url), ITS RESPONSE IS: " + axiosResponse.data);
+    } else { infoLog += ", Did not use mygeodata API, " }
 
-    res.send(json);
+    var {json, error} = await dxfToJson(url,layers, infoLog);
+    if (error) return res.status(400).send(error);
+    errorObject = await add_pointarray(json, dmax, sections);
+    if (errorObject?.error) return res.status(400).send(errorObject.error);
+  
+
+  res.send(json);
   
     if(process.env.NODE_ENV == "development" || process.env.NODE_ENV == "dev" ){
       let data2 = "";
