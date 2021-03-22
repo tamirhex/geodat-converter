@@ -24,6 +24,8 @@ exports.useMyGeoAPI = async (req,res) => {
     if (req.body?.output_method == 'binary'){
      outform = req.body?.output_method;
     }
+
+    if (!apikey) return res.status(400).send("What you're trying to do requires an api key");    
     //prepares requets object to post
     requestObj = {
       srcurl: url,

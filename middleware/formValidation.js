@@ -2,24 +2,12 @@ const {body, validationResult} = require('express-validator');
 const { stringIsAValidUrl } = require("../modules/helperfunctions");
 
 exports.postSchema = {
-  /*
-    url: {
-        custom: {
-            options: async value => {
-              if (value != "banana"){
-                console.log("isn't banana");
-                return Promise.reject('the url isnt banana')
-              } 
-              else console.log ("is ybanana");
-            }
-        }
-    },*/
     url: {
         notEmpty: true,
         errorMessage:"url is empty",
         custom: {
           options: async value => {
-            if (stringIsAValidUrl(value)){
+            if (!stringIsAValidUrl(value)){
               return Promise.reject(`url is invalid`);
             } 
           }
@@ -50,16 +38,7 @@ exports.postSchema = {
       },
     },
 
-    apikey: {
-      custom: {
-        options: async value => {
-          if (body('informat') != 'dxf'|| body('outcords')){
-            if(!value)
-            return Promise.reject(`What you're trying to do needs an API key`);
-          } 
-        }
-      },
-    },
+
 
 
     

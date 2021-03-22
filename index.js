@@ -28,14 +28,14 @@ app.post('/', checkSchema(postSchema), async function (req, res) {
           errors: errors.array()
       });
     }
-    //question marks notation for a bit of case insensivity, takes the non-null value
-    let layers = req.body.layers ?? req.body.Layers ?? req.body.layer ?? req.body.Layer ?? req.body.layerName;
-    let url = req.body.url ?? req.body.URL ?? req.body.Url;
-    let dmax = req.body?.dmax;
-    let sections = req.body?.sections ?? req.body?.section;
-    let getLayerList = req.body?.getlayers ?? req.body?.getLayers;
-    let informat = req.body?.informat;
+    const outcords = req.body?.outcords;
+    const incords = req.body?.incords;
     let outformat = req.body?.outformat;
+    if (outcords && !incords) {
+        return res.status(400).send("When assigning 'outcords' you should also assign" +
+         "'incords' otherwise output cordinates can be incorrect");
+    }
+    
     if (outformat !== "hexsoft_json"){
       //straight up use mygeodata api
       useMyGeoAPI(req,res);
@@ -44,6 +44,13 @@ app.post('/', checkSchema(postSchema), async function (req, res) {
     }
   
 
+})
+
+app.post('/getlayers', async function (req, res) {
+  const url = req.body?.url;
+  const {json, error} = await getLayers(url);
+  if (error) return res.status(400).send(error);
+  res.send(json);
 })
 
 app.get('/', (req, res) => {

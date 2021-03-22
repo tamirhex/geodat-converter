@@ -48,6 +48,7 @@ exports.hexsoft_convert = async (req,res) => {
       if (error) return res.status(400).send(error);
     } else { // MAIN LOGIC
       if (informat != 'dxf' || outcords) {
+        if (!apikey) return res.status(400).send("What you're trying to do requires an api key");
         infoLog += ", Will use mygeodata API because 'informat' != dxf || outcords exists. "
         //prepares requets object to post
         requestObj = {
