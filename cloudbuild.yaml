@@ -16,6 +16,13 @@
    - 'europe-west1-docker.pkg.dev/first-project-305113/converters-docker-repo/json-converter-api:$COMMIT_SHA'
    - '--region'
    - 'europe-west1'
+   - '--set-env-vars'
+   - '[APIKEY=RWAecgRF90I2CJf,NODE_ENV=development]'
+   - '--concurrency'
+   - '4'
+   - '--max-instances'
+   - '15'
+   - '--allow-unauthenticated'
    - '--platform'
    - 'managed'
  images:
