@@ -6,14 +6,10 @@ const axios = require('axios');
 const {currentDate, currentTime} = require('./dateAndTime');
 const {devFileLog, filterByInclude} = require('./helperfunctions');
 
-//url to download dxf:
-//https://firebasestorage.googleapis.com/v0/b/webqpm-client-dev.appspot.com/o/files%2Fdxf_example.dxf?alt=media&token=01de6805-5deb-44ca-9e64-66b9789066a3
-
 exports.dxfToJson = async (url,layers, logMessage) => {
     try{
         //logMessage will be sent in metadata to give more info to the user about the process.
         //*reads the dxf file preparing for parsing*//
-        //dataString = await fs.readFile(url,"utf8"); (reads from local file)
         let dxfContents = "";
         try {
           dxfContents =  await axios.get(url); // reads from file in url returns the response object
@@ -24,38 +20,38 @@ exports.dxfToJson = async (url,layers, logMessage) => {
           return {json:"", error:logMessage};
           
         }
-        const dataString = dxfContents?.data;
+        const dataString = dxfContents.data;
         devFileLog(dataString, "dxfContents.data");
-        const fileNameAlmost = dxfContents?.headers?.["content-disposition"]
+        const fileName = dxfContents?.headers?.["content-disposition"]
 
         //* parsing the dxf recieving a parsed object  *//
         const helper = new Helper(dataString);
-        const parsedObject = helper?.parsed?.entities;
-        devFileLog(parsedObject, "parsedObject");
+        const parsedDxf = helper?.parsed?.entities;
+        devFileLog(parsedDxf, "parsedDxf");
         
-        let requestedLayers = [];
         const requestedTypes = ["LINE", "ARC", "AcDbPolyline", "LWPOLYLINE", "POLYLINE"];
         let result;
-        //*layers can come either as a single string, as an array of strings, or empty*//
+        
+        // Fills the requestedLayers param 
         switch(true){
-          case Array.isArray(layers):
-            requestedLayers = layers;
-            result = filterByInclude(parsedObject, requestedLayers, requestedTypes);
+          case !layers: default:
+            result = parsedDxf.filter(key => requestedTypes.includes(key?.type));
+            logMessage += "Showing all layers because of empty or invalid layer property"
+            break;
+          case Array.isArray(layers) && layers.length > 0:
+
+            result = filterByInclude(parsedDxf, layers, requestedTypes);
             break;
           case (typeof layers) == 'string':
-            requestedLayers.push(layers)
-            result = filterByInclude(parsedObject, requestedLayers, requestedTypes);
+            result = filterByInclude(parsedDxf, layers.split(), requestedTypes);
             break;
-          case !layers:
-          default:
-            result = parsedObject.filter(key => requestedTypes.includes(key?.type));
-            logMessage += "Showing all layers because of empty or invalid layer property";
+
         }
         //* filters the dxf for requested layers and types within a layer *//
 
-        //const result = parsedObject.filter(key => requestedLayers.includes(key?.layer) &&
+        //const result = parsedDxf.filter(key => requestedLayers.includes(key?.layer) &&
         //        requestedTypes.includes(key?.type));   
-        //const result = filterByInclude(parsedObject, requestedLayers, requestedTypes);       
+        //const result = filterByInclude(parsedDxf, requestedLayers, requestedTypes);       
         devFileLog(result, "result");
 
         //* building the initial object of layer before inserting all drawings of layer*//
@@ -70,14 +66,14 @@ exports.dxfToJson = async (url,layers, logMessage) => {
             {
                 "docCreationDateYYYYMMDD" : currentDate(),
                 "docCreationTimeHHMMSSSS" : currentTime(),
-                "docSourceFileName" : fileNameAlmost,
+                "docSourceFileName" : fileName,
                 "docExtractorServiceName" : "????",
                 "docExtractorServiceVersion" : "????",
                 "docRequesterID" : "????", 
                 "docSourceDxfUrl" : url,
                 "layersExtracted" : [],
                 "infoLog" : logMessage,
-                "versionNotes": "Currently it only shows entities of type [LINE, ARC, AcDbPolyline, LWPOLYLINE, POLYLINE]"
+                "versionNotes": `Currently it only shows entities of type ${requestedTypes}`
             },
             "layerFromDxfSource": []
             /*
