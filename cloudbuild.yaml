@@ -17,7 +17,7 @@
    - '--region'
    - 'europe-west1'
    - '--set-env-vars'
-   - '[APIKEY=RWAecgRF90I2CJf,NODE_ENV=development]'
+   - 'APIKEY=RWAecgRF90I2CJf,NODE_ENV=development'
    - '--concurrency'
    - '4'
    - '--max-instances'
