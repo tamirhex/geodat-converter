@@ -34,7 +34,7 @@ function approxeq(num1, num2, okRatio) {
     }
 }
 
-function getLinePoints(drawing, counter){
+function getSectionLinePoints(drawing, counter){
     const x0 = drawing?.code_10_startXeastLng;
     const x1 = drawing?.code_11_endXeastLng;
     const y0 = drawing?.code_20_startYnorthLat;
@@ -171,36 +171,7 @@ function addArcPointsAbs(drawing, polyline, dmax){
     return pointArray[pointArray.length - 1];
 }
 
-function addArcPoints(drawing, polyline, dmax) {
-    // For ARC type, there is only center x,y ; so startX is same as endX, so is for y.
-    const x0 = drawing?.code_10_startXeastLng;
-    const y0 = drawing?.code_20_startYnorthLat;
-    const r = drawing?.code_40_circleArcRadius;
-    const d0 = drawing?.code_50_startArcAngle;
-    const d1 = drawing?.code_51_endArcAngle;
 
-    pointArray = [];
-    for (let i = 1; i <= 19; i++) {
-        //let angle = d0 + ((i * 5) / 100) * (d1 - d0);
-        let angle = d0 + 0.05;
-        let dx = r * Math.cos(angle);
-        let dy = r * Math.sin(angle);
-
-        let point = {
-            'point': {
-                "xLng": x0 + dx,
-                "yLat": y0 + dy,
-                "zElv":  0,
-               // "fromArc": i for debugging
-            }
-        }
-        pointArray.push(point);
-    }
-    polyline.push(...pointArray);
-    return pointArray[pointArray.length - 1];
-    
-
-}
 
 //anchorPoint is last point that was drawn
 function addLWPOLYLINEPoints(vertices, polyline, anchorPoint){
@@ -305,7 +276,7 @@ exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
           let sectionLineArray = [];
           for (let i = 0; i < drawingsArray.length; i++) {
               if (drawingsArray[i]?.code_00_drawingType == 'LINE'){
-                  sectionLine = getLinePoints(drawingsArray[i], sectionCounter);
+                  sectionLine = getSectionLinePoints(drawingsArray[i], sectionCounter);
                   sectionCounter++;
                   sectionLineArray.push(sectionLine);
               }

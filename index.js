@@ -5,9 +5,6 @@ const { postSchema } = require('./middleware/formValidation');
 const {checkSchema, validationResult} = require('express-validator');
 const express = require('express');
 const app = express();
-const Oldfs = require('fs');
-const util = require('util');
-const fs = Oldfs.promises;
 
 app.use(express.json());
 

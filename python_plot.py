@@ -37,6 +37,6 @@ if __name__ == '__main__':
         plotPolyline()
         plotSections()
     else:
-        print("bad argument, either sections, notsections, or both")
+        print("bad argument, either 'sections', 'notsections', or 'both'")
     plt.show()
 

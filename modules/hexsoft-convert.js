@@ -5,29 +5,21 @@ const { stringIsAValidUrl } = require("../modules/helperfunctions");
 const express = require('express');
 const app = express();
 const Oldfs = require('fs');
-const util = require('util');
 const { default: axios } = require("axios");
 const fs = Oldfs.promises;
 
 exports.hexsoft_convert = async (req,res) => {
   try{
     let infoLog = ""
-
-    let layers = req.body.layers ?? req.body.Layers ?? req.body.layer ?? req.body.Layer ?? req.body.layerName;
-    let url = req.body.url ?? req.body.URL ?? req.body.Url;
-    let dmax = req.body?.dmax;
-    let sections = req.body?.sections ?? req.body?.section;
-    const informat = req.body?.informat;
-
-    //**geodata api related options(will be used only if informat isn't dxf):*/
+    const {layers, informat, incords, outcords} = req.body;
+    let {sections, url} = req.body;
+    let dmax = req.body?.dmax ?? 0.4;
     const apikey = process.env.APIKEY;
-    const incords = req.body?.incords;
-    const outcords = req.body?.outcords;
-    let cloudfunction_url = process.env.APICLOUDFUNCTION ?? 
+    const cloudfunction_url = process.env.APICLOUDFUNCTION ?? 
     "https://us-central1-first-project-305113.cloudfunctions.net/hello_http";
-    let outform = "url";
+    const outform = "url";
     if (req.body?.output_method == 'binary' && process.env.NODE_ENV == 'development'){
-      outform = req.body?.output_method;
+      outform = req.body.output_method;
     }
 
     //** lets sections property in request to be either a string or an array of strings */
@@ -38,9 +30,8 @@ exports.hexsoft_convert = async (req,res) => {
     } else if (!Array.isArray(sections)) {
       sections = [];
     }
-    if (!dmax) dmax = 0.4;
 
-
+    // One of those values being true means we need to use mygeodata API.
     if (informat != 'dxf' || outcords) {
       if (!apikey) return res.status(400).send("What you're trying to do requires an api key");
       infoLog += ", Will use mygeodata API because 'informat' != dxf || outcords exists. "
@@ -73,7 +64,7 @@ exports.hexsoft_convert = async (req,res) => {
         .send("SOME ERROR OCCURED WITH MYGEODATA API(html form usually means invalid input url), ITS RESPONSE IS: " + axiosResponse.data);
     } else { infoLog += ", Did not use mygeodata API, " }
 
-    var {json, error} = await dxfToJson(url,layers, infoLog);
+    let {json, error} = await dxfToJson(url,layers, infoLog);
     if (error) return res.status(400).send(error);
     errorObject = await add_pointarray(json, dmax, sections);
     if (errorObject?.error) return res.status(400).send(errorObject.error);
@@ -96,7 +87,7 @@ exports.hexsoft_convert = async (req,res) => {
 
   }
   catch (error) {
-    res.send("Error occured, red.body.url is " + req.body.url +
+    res.send("Error occured in hexsoft-convert.js, red.body.url is " + req.body.url +
     ", req.body.layers is " + req.body.layers + "\n error is " + error);
   }
 

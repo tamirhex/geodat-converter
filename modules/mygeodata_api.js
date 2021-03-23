@@ -1,9 +1,7 @@
 const { devFileLog } = require('./helperfunctions');
 const axios = require('axios');
 const express = require('express');
-const Oldfs = require('fs');
-const util = require('util');
-const fs = Oldfs.promises;
+
 
 exports.useMyGeoAPI = async (req,res) => {
   try{
