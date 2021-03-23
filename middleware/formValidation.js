@@ -16,8 +16,8 @@ exports.postSchema = {
     informat: {
       custom: {
         options: async value => {
-          let allowedFormats = ["shp", 'kml', 'kmz', "geojson", 'gml', 'gpx', 
-          'mapinfo', 'dgn', 'dxf', 'gpkg', 'sqlite', 'csv', 'ods', 'xlsx']
+          const allowedFormats = ["shp", 'kml', 'kmz', "geojson", 'gml', 'gpx', 
+          'mapinfo', 'dgn', 'dxf', 'gpkg', 'sqlite', 'csv', 'ods', 'xlsx', 'dwg']
           if (!allowedFormats.includes(value)){
             console.log("informat is invalid");
             return Promise.reject(`informat is invalid, isn't one of the following formats: ${allowedFormats}`);
@@ -29,7 +29,7 @@ exports.postSchema = {
     outformat: {
       custom: {
         options: async value => {
-          let allowedFormats = ["shp", 'kml', 'kmz', "geojson", 'gml', 'gpx', 
+          const allowedFormats = ["shp", 'kml', 'kmz', "geojson", 'gml', 'gpx', 
           'mapinfo', 'dgn', 'dxf', 'gpkg', 'sqlite', 'csv', 'ods', 'xlsx', 'hexsoft_json']
           if (!allowedFormats.includes(value)){
             return Promise.reject(`outformat is invalid, isn't one of the following formats: ${allowedFormats}`);

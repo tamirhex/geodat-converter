@@ -51,7 +51,7 @@ exports.hexsoft_convert = async (req,res) => {
         key: apikey,
         format: 'dxf'
       }
-      //if there are outcords it means user wishes to convert cordinates
+      // if there are outcords it means user wishes to convert cordinates so we take incords too
       if (outcords) {
         requestObj.outcrs = outcords;
         requestObj.incrs = incords;
@@ -65,7 +65,7 @@ exports.hexsoft_convert = async (req,res) => {
       // send the request;
       const axiosResponse = await axios(options);
       devFileLog(axiosResponse, "axiosResponse");
-      //checks if we actually got a good url from axios
+      //checks if we got a url from the api
       if (axiosResponse?.status == 200 && stringIsAValidUrl(axiosResponse?.data)) {
         url = axiosResponse?.data;
       }

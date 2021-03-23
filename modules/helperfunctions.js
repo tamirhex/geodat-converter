@@ -50,9 +50,5 @@ exports.pointsDistance = (p1, p2) => {
   const z2 = p2.point?.zElv ?? 0;
 
   distance = (Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2)));
-  if(!distance && distance != 0)
-    console.log(`distance is ${distance} x1 is ${x1} x2 is ${x2} y1 is ${y1} y2 is ${y2} z1 is ${z1} z2 is ${z2}`);
-  //else
-    //console.log("fine distance is " + distance);
   return distance;
 }

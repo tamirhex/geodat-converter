@@ -58,18 +58,14 @@ exports.dxfToJson = async (url,layers, logMessage) => {
         filteredObj = {
             "version":
             {
-                "title":"DXF Converted to JSON",
-                "objectName":"???",
-                "versionTimestamp":"2021.03.21"
+                "serviceName":"GEODAT converter",
+                "serviceVersion":"21.03.23"
             },
             "metadata":
             {
                 "docCreationDateYYYYMMDD" : currentDate(),
                 "docCreationTimeHHMMSSSS" : currentTime(),
                 "docSourceFileName" : fileName,
-                "docExtractorServiceName" : "????",
-                "docExtractorServiceVersion" : "????",
-                "docRequesterID" : "????", 
                 "docSourceDxfUrl" : url,
                 "layersExtracted" : [],
                 "infoLog" : logMessage,
@@ -77,7 +73,7 @@ exports.dxfToJson = async (url,layers, logMessage) => {
             },
             "layerFromDxfSource": []
             /*
-            Will have form of:
+            layerFromDxfSource Will have form of:
             {
                 "layerName":requestedLayers,
                 "layerDrawings":[{},{}],
@@ -100,8 +96,9 @@ exports.dxfToJson = async (url,layers, logMessage) => {
                   "code_51_endArcAngle":result[i]?.endAngle,
                   "code_vertices":result[i]?.vertices
               }
-              //** if in our layer object list there is already an object for that drawing's layer */
-              //** then add the drawing to that object's array, otherwise add the missing object*/
+              //** if in our layerFromDxfSource array there is already an object for that drawing's layer */
+              //** then add the drawing to that object's array(layerDrawings), otherwise add the missing object*/
+              let layerObject;
               if (layerObject = filteredObj.layerFromDxfSource.find(e => e.layerName === result[i]?.layer)){
                 layerObject.layerDrawings.push(drawingObject);
               } else {
