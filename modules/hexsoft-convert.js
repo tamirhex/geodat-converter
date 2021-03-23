@@ -15,6 +15,7 @@ exports.hexsoft_convert = async (req,res) => {
     let {sections, url} = req.body;
     let dmax = req.body?.dmax ?? 0.4;
     const apikey = process.env.APIKEY;
+    //cloudfunction used to communicate with mygeodata API
     const cloudfunction_url = process.env.APICLOUDFUNCTION ?? 
     "https://europe-west1-first-project-305113.cloudfunctions.net/mygeodata_api";
     const outform = "url";
@@ -58,7 +59,7 @@ exports.hexsoft_convert = async (req,res) => {
       devFileLog(axiosResponse, "axiosResponse");
       //checks if we got a url from the api
       if (axiosResponse?.status == 200 && stringIsAValidUrl(axiosResponse?.data)) {
-        url = axiosResponse?.data;
+        url = axiosResponse.data;
       }
       else return res.status(axiosResponse.status)
         .send("SOME ERROR OCCURED WITH MYGEODATA API(html form usually means invalid input url), ITS RESPONSE IS: " + axiosResponse.data);

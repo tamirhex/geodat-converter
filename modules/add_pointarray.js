@@ -81,7 +81,6 @@ function getSectionLinePoints(drawing, counter){
         'angle' : angle,
         'counter' : counter
     }
-    //sectionsArray[i].pointi.point.xLng
     return pointsObject;
 }
 
@@ -163,7 +162,6 @@ function addArcPointsAbs(drawing, polyline, dmax){
                 "source": 'arc'
             }
         }
-        //counter++; //debugging
         pointArray.push(point);
     }
     
@@ -177,10 +175,9 @@ function addArcPointsAbs(drawing, polyline, dmax){
 function addLWPOLYLINEPoints(vertices, polyline, anchorPoint){
   let point;
   let lastPoint;
-  //console.log(anchorPoint);
   const d2first = pointsDistance(anchorPoint, firstVerticesPoint(vertices));
   const d2last = pointsDistance(anchorPoint, lastVerticesPoint(vertices));
-  //if distance from anchor point to first point in vertice is bigger, add vertice reversed
+  //if distance from anchor point to first point in vertice is bigger, add vertice points in reversed order
   if (d2first > d2last) {
     lastIndex = vertices.length - 1;
     for (let i = lastIndex; i >= 0; i--){
@@ -235,7 +232,14 @@ function lastVerticesPoint(vertices){
   }
   return point;
 }
-//**DxfJsonInitial and Pj stands for Polyline json */
+/**
+ * This function takes a filtered initially parsed json object of a dxf file, and changes
+ * the structure of how it holds the cordinates, from specific structures into general point objects.
+ * @param {Object} DxfJsonI 
+ * @param {number} dmax 
+ * @param {boolean} sections 
+ * @returns {Object} final json that is ready to be sent back to user.
+ */
 exports.add_pointarray = async (DxfJsonI, dmax, sections) => {
   try {
     let layerObjArray = DxfJsonI?.layerFromDxfSource;
