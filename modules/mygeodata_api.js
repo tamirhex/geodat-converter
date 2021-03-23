@@ -8,7 +8,7 @@ exports.useMyGeoAPI = async (req,res) => {
     const {url, outformat, incords, outcords, layers_mygeodata} = req.body;
     const apikey = process.env.APIKEY;
     const cloudfunction_url = process.env.APICLOUDFUNCTION ?? 
-        "https://us-central1-first-project-305113.cloudfunctions.net/hello_http";
+        "https://europe-west1-first-project-305113.cloudfunctions.net/mygeodata_api";
     const outform = "url";
 
     

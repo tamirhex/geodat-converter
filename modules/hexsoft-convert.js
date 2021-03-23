@@ -16,7 +16,7 @@ exports.hexsoft_convert = async (req,res) => {
     let dmax = req.body?.dmax ?? 0.4;
     const apikey = process.env.APIKEY;
     const cloudfunction_url = process.env.APICLOUDFUNCTION ?? 
-    "https://us-central1-first-project-305113.cloudfunctions.net/hello_http";
+    "https://europe-west1-first-project-305113.cloudfunctions.net/mygeodata_api";
     const outform = "url";
     if (req.body?.output_method == 'binary' && process.env.NODE_ENV == 'development'){
       outform = req.body.output_method;
