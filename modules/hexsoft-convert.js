@@ -13,7 +13,7 @@ exports.hexsoft_convert = async (req,res) => {
     let infoLog = ""
     const {layers, informat, incords, outcords} = req.body;
     let {sections, url} = req.body;
-    let dmax = req.body?.dmax ?? 0.4;
+    let dmax = req.body?.dmax ?? process.env.dmax ?? 1;
     const apikey = process.env.APIKEY;
     //cloudfunction used to communicate with mygeodata API
     const cloudfunction_url = process.env.APICLOUDFUNCTION ?? 
