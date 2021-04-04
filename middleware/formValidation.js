@@ -30,7 +30,7 @@ exports.postSchema = {
       custom: {
         options: async value => {
           const allowedFormats = ["shp", 'kml', 'kmz', "geojson", 'gml', 'gpx', 
-          'mapinfo', 'dgn', 'dxf', 'gpkg', 'sqlite', 'csv', 'ods', 'xlsx', 'hexsoft_json']
+          'mapinfo', 'dgn', 'dxf', 'gpkg', 'sqlite', 'csv', 'ods', 'xlsx', 'hexsoft-json']
           if (!allowedFormats.includes(value)){
             return Promise.reject(`outformat is invalid, isn't one of the following formats: ${allowedFormats}`);
           } 
