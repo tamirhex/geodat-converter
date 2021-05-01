@@ -9,13 +9,14 @@ exports.useMyGeoAPI = async (req,res) => {
     const apikey = process.env.APIKEY;
     const cloudfunction_url = process.env.APICLOUDFUNCTION ?? 
         "https://europe-west1-first-project-305113.cloudfunctions.net/mygeodata_api";
-    const outform = "url";
+    const urlorfile = req.body.urlorfile ?? "url" ;
+    if (urlorfile == "file") urlorfile == "binary" // The API only knows binary or url, but file is easier to understand for user
 
     
     // prepares requets object to post, with keys that match mygeodata api.
     requestObj = {
-      srcurl: url,
-      outform: outform,
+      srcurssl: url,
+      outform: urlorfile,
       key: apikey,
       format: outformat,
       outcrs: outcords,
