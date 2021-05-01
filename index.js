@@ -26,7 +26,7 @@ app.post('/', checkSchema(postSchema), async function (req, res) {
   }
   
   // Decides if to use mygeodata api or not.
-  if (outformat !== "hexsoft_json"){
+  if (outformat !== "hexsoft-json"){
     useMyGeoAPI(req,res);
   } else {
     hexsoft_convert(req,res);
