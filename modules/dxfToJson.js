@@ -53,7 +53,7 @@ exports.dxfToJson = async (url, layers, logMessage) => {
     filteredObj = {
       "version": {
         "serviceName": "GEODAT converter",
-        "serviceVersion": "21.03.23"
+        "serviceVersion": "21.05.01"
       },
       "metadata": {
         "docCreationDateYYYYMMDD": currentDate(),
