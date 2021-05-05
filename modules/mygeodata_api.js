@@ -40,6 +40,7 @@ exports.useMyGeoAPI = async (req,res) => {
     const axiosResponse = await axios(options);
     devFileLog(axiosResponse, "axiosResponse");
     res.status(axiosResponse.status).send(axiosResponse.data);
+    return(axiosResponse.data)
 
   }
   catch (error) {
