@@ -9,6 +9,8 @@ europe-west1-docker.pkg.dev/first-project-305113/converters-docker-repo/json-con
 
 docker push europe-west1-docker.pkg.dev/first-project-305113/converters-docker-repo/json-converter-api
 
+.
+
 
 
 
