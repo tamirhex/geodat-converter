@@ -1,4 +1,5 @@
 const { getLayers } = require("./modules/getLayers");
+const { get_layers_nonhex } = require("./modules/get_layers_nonhex");
 const { hexsoft_convert } = require("./modules/hexsoft-convert");
 const { useMyGeoAPI } = require("./modules/mygeodata_api");
 const { postSchema } = require('./middleware/formValidation');
@@ -34,10 +35,16 @@ app.post('/', checkSchema(postSchema), async function (req, res) {
 })
 
 app.post('/getlayers', async function (req, res) {
-  const url = req.body.url;
-  const {json, error} = await getLayers(url);
+  const {url, legacy}= req.body;
+  let layers, error;
+  //legacy means it gets layers of soon to be deprecated hexsoft-json
+  if (legacy == true) {
+    ({ layers, error } = await getLayers(url));
+  } else {
+    ({ layers, error } = await get_layers_nonhex(req, res));
+  }
   if (error) return res.status(400).send(error);
-  res.send(json);
+  res.send(layers);
 })
 
 app.get('/', (req, res) => {

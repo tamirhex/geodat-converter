@@ -34,14 +34,14 @@ exports.getLayers = async (url) => {
       "layers": layerArray
     }
     return {
-      json: jsonObj,
+      layers: jsonObj,
       error: ""
     }
   } catch (error) {
     console.error("error is " + error);
     return {
       error: logMessage,
-      json: logMessage
+      layers: logMessage
     }
   }
 }
