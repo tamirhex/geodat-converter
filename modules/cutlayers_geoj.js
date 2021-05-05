@@ -1,6 +1,7 @@
 //const { devFileLog } = require('./helperfunctions');
 
 /**
+ * THIS IS CURRENTLY NOT IN USE BECAUSE NOT REQUIRED, BUT IT WORKS ON ANY GEOJSON WITH THIS JSON PATH.
  * This method recieves a geojson file and outputs a geojson file only with requests layers
  * Important!: This assumes all drawings are under features array and have layer in their property
  * so the json path for that layer is features[i].properties.Layer
