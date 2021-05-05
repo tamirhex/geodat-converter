@@ -38,7 +38,7 @@ exports.get_layers_nonhex = async (req, res) => {
     const axiosResponse = await axios(options);
     let geojson = axiosResponse.data;
     devFileLog(geojson, "geojson_nonhex");
-    let layers = extract_layer_array(geojson_raw);
+    let layers = extract_layer_array(geojson);
     
     if (layers) {
       return {
