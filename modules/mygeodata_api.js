@@ -14,7 +14,6 @@ exports.useMyGeoAPI = async (req,res) => {
         "https://europe-west1-first-project-305113.cloudfunctions.net/mygeodata_api";
     let urlorfile = req.body.urlorfile ?? "url" ;
     if (urlorfile == "file") urlorfile = "binary" // The API only knows binary or url, but file is easier to understand for user
-    console.error("urlorfile is " + urlorfile);
     
     // prepares requets object to post, with keys that match mygeodata api.
     requestObj = {
@@ -30,9 +29,6 @@ exports.useMyGeoAPI = async (req,res) => {
     if (outcords) {
       requestObj.outcrs = outcords;
       requestObj.incrs = incords;
-    }
-    if (layers_mygeodata) {
-      requestObj.layers = layers_mygeodata;
     }
 
     const options = {
